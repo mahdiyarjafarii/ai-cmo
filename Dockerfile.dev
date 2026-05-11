@@ -1,0 +1,26 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Install development dependencies
+RUN apk add --no-cache dumb-init
+
+# Copy package files
+COPY package*.json ./
+
+# Install all dependencies (including dev)
+RUN npm install
+
+# Copy source code (will be mounted as volume)
+COPY . .
+
+# Create output directory
+RUN mkdir -p /app/output
+
+ENV NODE_ENV=development
+ENV LOG_LEVEL=debug
+
+ENTRYPOINT ["/usr/sbin/dumb-init", "--"]
+
+# Run dev mode with watch
+CMD ["npm", "run", "dev"]
