@@ -41,7 +41,7 @@
     "prisma": "^7.8.0",
     "uuid": "^10.0.0",
     "yargs": "^17.7.2",
-    "zod": "^4.4.3"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
