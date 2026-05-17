@@ -156,6 +156,11 @@ const MarkdownMessage: React.FC<{ content: string }> = ({ content }) => {
   );
 };
 
+const createMessageId = () =>
+  typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
 export const ChatPanel: React.FC<ChatPanelProps> = ({ result }) => {
   const { analysisId, projectId, chat, addChatMessage } = useAnalysisStore();
   const [input, setInput] = useState('');
@@ -176,7 +181,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ result }) => {
       setError(null);
 
       addChatMessage({
-        id: crypto.randomUUID(),
+        id: createMessageId(),
         role: 'user',
         content: msg,
         timestamp: new Date().toISOString(),
@@ -186,7 +191,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ result }) => {
       try {
         const reply = await sendChatMessage(msg, chat, { analysisId, projectId });
         addChatMessage({
-          id: crypto.randomUUID(),
+          id: createMessageId(),
           role: 'assistant',
           content: reply,
           timestamp: new Date().toISOString(),
