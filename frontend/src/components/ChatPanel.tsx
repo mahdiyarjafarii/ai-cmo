@@ -192,7 +192,16 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ result }) => {
           timestamp: new Date().toISOString(),
         });
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Chat failed');
+        const message =
+          typeof err === 'object' &&
+          err !== null &&
+          'response' in err &&
+          (err as { response?: { data?: { error?: string } } }).response?.data?.error
+            ? (err as { response: { data: { error: string } } }).response.data.error
+            : err instanceof Error
+              ? err.message
+              : 'Chat failed';
+        setError(message);
       } finally {
         setIsThinking(false);
         inputRef.current?.focus();

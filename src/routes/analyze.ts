@@ -27,7 +27,7 @@ export function buildAnalyzeRouter(
 
   router.post("/analyze", async (req: Request, res: Response) => {
     try {
-      const { url } = req.body;
+      const { url, projectId } = req.body as { url?: string; projectId?: string };
 
       if (!url) {
         res.status(400).json({ error: "URL is required" });
@@ -36,6 +36,13 @@ export function buildAnalyzeRouter(
 
       const analysisId = uuidv4();
       streamManager.createAnalysis(analysisId);
+      const normalizedUrl = normalizeUrl(url);
+
+      if (projectId) {
+        db.prepare(
+          "UPDATE projects SET status = 'crawling', analysis_id = ?, updated_at = datetime('now') WHERE id = ?"
+        ).run(analysisId, projectId);
+      }
 
       logger.info(`Starting analysis ${analysisId} for ${url}`);
 
@@ -50,7 +57,6 @@ export function buildAnalyzeRouter(
           analysisResults.set(analysisId, result);
 
           // Persist to global crawl cache
-          const normalizedUrl = normalizeUrl(url);
           const existing = db.prepare("SELECT id FROM crawl_cache WHERE url = ?").get(normalizedUrl);
           if (!existing) {
             db.prepare(

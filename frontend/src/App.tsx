@@ -156,7 +156,7 @@ function ProjectPage() {
       setLoading(true);
       setError(null);
 
-      startAnalysis(url).then(({ analysisId }) => {
+      startAnalysis(url, id).then(({ analysisId }) => {
         setAnalysisId(analysisId);
         subscribeToAnalysis(analysisId, {
           onMessage: (msg) => { if (msg.type !== 'step') addMessage(msg); },

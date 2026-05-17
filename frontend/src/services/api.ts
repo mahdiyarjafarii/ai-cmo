@@ -9,9 +9,13 @@ export const api = axios.create({
 });
 
 export async function startAnalysis(
-  url: string
+  url: string,
+  projectId?: string | null
 ): Promise<{ analysisId: string }> {
-  const response = await api.post('/api/analyze', { url });
+  const response = await api.post('/api/analyze', {
+    url,
+    projectId: projectId ?? undefined,
+  });
   return response.data;
 }
 
