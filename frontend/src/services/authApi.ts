@@ -1,8 +1,11 @@
 import axios from "axios";
 import { TwitterFeed, LinkedInFeed, RedditFeed, SeoReport } from "../types";
 
+const API_ORIGIN = import.meta.env.VITE_API_URL;
+const API_BASE = API_ORIGIN ? `${API_ORIGIN}/api` : "/api";
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "/api",
+  baseURL: API_BASE,
   withCredentials: true,
 });
 
