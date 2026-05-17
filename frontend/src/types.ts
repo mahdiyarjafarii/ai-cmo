@@ -204,6 +204,7 @@ export interface ContentFeed {
 export interface AnalysisState {
   result: AnalysisResult | null;
   analysisId: string | null;
+  projectId: string | null;
   loading: boolean;
   messages: StreamMessage[];
   steps: Map<string, StepEvent>;
@@ -211,4 +212,8 @@ export interface AnalysisState {
   error: string | null;
   url: string;
   chat: ChatMessage[];
+  twitterFeed: TwitterFeed | null;
+  linkedinFeed: LinkedInFeed | null;
+  redditFeed: RedditFeed | null;
+  seoReport: SeoReport | null;
 }

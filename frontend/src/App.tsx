@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { InputPanel } from './components/InputPanel';
 import { Dashboard } from './components/Dashboard';
 import { AuthModal } from './components/AuthModal';
@@ -9,74 +10,41 @@ import { startAnalysis, subscribeToAnalysis } from './services/api';
 import { authApi, projectsApi, Project } from './services/authApi';
 import { StepEvent } from './types';
 
-export default function App() {
-  const {
-    result,
-    loading,
-    steps,
-    stepOrder,
-    error,
-    setLoading,
-    addMessage,
-    upsertStep,
-    setError,
-    setResult,
-    setAnalysisId,
-    reset,
-  } = useAnalysisStore();
+// ─── Home page ────────────────────────────────────────────────────────────────
 
-  const { user, isAuthenticated, setUser, logout } = useAuthStore();
-
+function HomePage() {
+  const navigate = useNavigate();
+  const { setError, reset } = useAnalysisStore();
+  const { isAuthenticated, setUser } = useAuthStore();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [pendingUrl, setPendingUrl] = useState<string | null>(null);
   const [showProjects, setShowProjects] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
-  const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
+  const { user, logout } = useAuthStore();
 
-  // Check session on mount
   useEffect(() => {
     authApi.me()
       .then(({ data }) => {
         setUser(data.user);
-        loadProjects();
+        projectsApi.list().then(({ data: d }) => setProjects(d.projects)).catch(() => {});
       })
       .catch(() => setUser(null));
   }, []);
 
-  const loadProjects = () => {
-    projectsApi.list()
-      .then(({ data }) => setProjects(data.projects))
-      .catch(() => {});
-  };
-
-  const handleAnalyze = async (url: string) => {
+  const handleAnalyze = (url: string) => {
     if (!isAuthenticated) {
       setPendingUrl(url);
       setShowAuthModal(true);
       return;
     }
-    startAnalysisFlow(url);
+    startFlow(url);
   };
 
-  const startAnalysisFlow = async (url: string) => {
-    // Create/find project
+  const startFlow = async (url: string) => {
     let projectId: string | null = null;
     try {
       const { data } = await projectsApi.create({ url });
-      projectId = data.project.id as string;
-
-      if (data.cached) {
-        // Load from cache
-        const { data: proj } = await projectsApi.get(projectId!);
-        if (proj.analysisResult) {
-          setResult(proj.analysisResult as never);
-          setLoading(false);
-          setActiveProjectId(projectId);
-          loadProjects();
-          return;
-        }
-      }
-      setActiveProjectId(projectId);
+      projectId = data.project.id;
     } catch (err: unknown) {
       const e = err as { response?: { data?: { code?: string; projectId?: string } } };
       if (e?.response?.data?.code === 'UPGRADE_REQUIRED') {
@@ -84,140 +52,189 @@ export default function App() {
         return;
       }
       if (e?.response?.data?.projectId) {
-        const existingId = e.response.data.projectId;
-        projectId = existingId;
-        // Load cached data for existing project
-        try {
-          const { data: proj } = await projectsApi.get(existingId);
-          if (proj.analysisResult) {
-            setResult(proj.analysisResult as never);
-            setLoading(false);
-            setActiveProjectId(existingId);
-            return;
-          }
-        } catch {}
+        projectId = e.response.data.projectId;
       }
     }
 
-    // Run crawl
+    if (!projectId) {
+      setError('Failed to create project');
+      return;
+    }
+
     reset();
-    setLoading(true);
-    setError(null);
-
-    try {
-      const { analysisId } = await startAnalysis(url);
-      setAnalysisId(analysisId);
-
-      await subscribeToAnalysis(analysisId, {
-        onMessage: (message) => {
-          if (message.type !== 'step') addMessage(message);
-        },
-        onStep: (step: StepEvent) => upsertStep(step),
-        onError: (errorMsg) => {
-          setError(errorMsg);
-          setLoading(false);
-        },
-        onComplete: (analysisResult) => {
-          if (analysisResult) setResult(analysisResult);
-          setLoading(false);
-          loadProjects();
-        },
-      });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to start analysis');
-      setLoading(false);
-    }
-  };
-
-  const handleAuthSuccess = () => {
-    setShowAuthModal(false);
-    loadProjects();
-    if (pendingUrl) {
-      const url = pendingUrl;
-      setPendingUrl(null);
-      startAnalysisFlow(url);
-    }
+    navigate(`/project/${projectId}`, { state: { url, fresh: true } });
   };
 
   const handleLogout = async () => {
     try { await authApi.logout(); } catch {}
     logout();
     setProjects([]);
-    setActiveProjectId(null);
-    reset();
   };
 
-  const handleOpenProject = async (project: Project) => {
-    setShowProjects(false);
-    reset();
-    setActiveProjectId(project.id);
-
-    if (project.status === 'done') {
-      try {
-        setLoading(true);
-        const { data } = await projectsApi.get(project.id);
-        if (data.analysisResult) {
-          setResult(data.analysisResult as never);
-        }
-        setLoading(false);
-      } catch {
-        setLoading(false);
-      }
-    }
-  };
-
-  const handleNewAnalysis = () => {
-    reset();
-    setActiveProjectId(null);
-  };
-
-  const isActive = loading || !!result || stepOrder.length > 0;
+  const { error } = useAnalysisStore();
 
   return (
     <>
-      {!isActive ? (
-        <InputPanel
-          onSubmit={handleAnalyze}
-          isLoading={loading}
-          error={error}
-          user={user}
-          onShowProjects={() => setShowProjects(true)}
-          onLogout={handleLogout}
-          onLogin={() => setShowAuthModal(true)}
-        />
-      ) : (
-        <Dashboard
-          isLoading={loading}
-          steps={steps}
-          stepOrder={stepOrder}
-          error={error}
-          result={result}
-          onNewAnalysis={handleNewAnalysis}
-          user={user}
-          onShowProjects={() => setShowProjects(true)}
-          onLogout={handleLogout}
-        />
-      )}
+      <InputPanel
+        onSubmit={handleAnalyze}
+        isLoading={false}
+        error={error}
+        user={user}
+        onShowProjects={() => setShowProjects(true)}
+        onLogout={handleLogout}
+        onLogin={() => setShowAuthModal(true)}
+      />
 
       <AuthModal
         open={showAuthModal}
         onClose={() => { setShowAuthModal(false); setPendingUrl(null); }}
-        onSuccess={handleAuthSuccess}
+        onSuccess={() => {
+          setShowAuthModal(false);
+          projectsApi.list().then(({ data }) => setProjects(data.projects)).catch(() => {});
+          if (pendingUrl) { const u = pendingUrl; setPendingUrl(null); startFlow(u); }
+        }}
       />
 
       <ProjectsSidebar
         open={showProjects}
         onClose={() => setShowProjects(false)}
         projects={projects}
-        activeProjectId={activeProjectId}
-        onOpenProject={handleOpenProject}
+        activeProjectId={null}
+        onOpenProject={(p) => { setShowProjects(false); navigate(`/project/${p.id}`); }}
         onDeleteProject={async (id) => {
           await projectsApi.delete(id);
-          loadProjects();
-          if (activeProjectId === id) handleNewAnalysis();
+          projectsApi.list().then(({ data }) => setProjects(data.projects)).catch(() => {});
         }}
         plan={user?.plan ?? 'free'}
       />
     </>
+  );
+}
+
+// ─── Project page ─────────────────────────────────────────────────────────────
+
+import { useParams, useLocation } from 'react-router-dom';
+
+function ProjectPage() {
+  const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout, setUser } = useAuthStore();
+  const [showProjects, setShowProjects] = useState(false);
+  const [projects, setProjects] = useState<Project[]>([]);
+
+  const {
+    result, loading, steps, stepOrder, error,
+    setLoading, addMessage, upsertStep, setError, setResult,
+    setAnalysisId, setProjectId,
+    setTwitterFeed, setLinkedinFeed, setRedditFeed, setSeoReport,
+    reset,
+  } = useAnalysisStore();
+
+  useEffect(() => {
+    authApi.me()
+      .then(({ data }) => {
+        setUser(data.user);
+        projectsApi.list().then(({ data: d }) => setProjects(d.projects)).catch(() => {});
+      })
+      .catch(() => setUser(null));
+  }, []);
+
+  const loadProjects = () => {
+    projectsApi.list().then(({ data }) => setProjects(data.projects)).catch(() => {});
+  };
+
+  useEffect(() => {
+    if (!id) return;
+
+    const fresh = (location.state as { url?: string; fresh?: boolean } | null)?.fresh;
+    const url = (location.state as { url?: string } | null)?.url;
+
+    if (fresh && url) {
+      // New analysis — start the agent
+      setProjectId(id);
+      setLoading(true);
+      setError(null);
+
+      startAnalysis(url).then(({ analysisId }) => {
+        setAnalysisId(analysisId);
+        subscribeToAnalysis(analysisId, {
+          onMessage: (msg) => { if (msg.type !== 'step') addMessage(msg); },
+          onStep: (step: StepEvent) => upsertStep(step),
+          onError: (msg) => { setError(msg); setLoading(false); },
+          onComplete: (res) => {
+            if (res) setResult(res);
+            setLoading(false);
+            loadProjects();
+          },
+        });
+      }).catch((err) => {
+        setError(err instanceof Error ? err.message : 'Failed to start analysis');
+        setLoading(false);
+      });
+    } else {
+      // Load existing project from DB
+      setProjectId(id);
+      setLoading(true);
+      projectsApi.get(id).then(({ data }) => {
+        if (data.analysisResult) setResult(data.analysisResult as never);
+        if (data.content?.twitter) setTwitterFeed(data.content.twitter);
+        if (data.content?.linkedin) setLinkedinFeed(data.content.linkedin);
+        if (data.content?.reddit) setRedditFeed(data.content.reddit);
+        if (data.content?.seo) setSeoReport(data.content.seo);
+        setLoading(false);
+      }).catch(() => setLoading(false));
+    }
+
+    return () => { reset(); };
+  }, [id]);
+
+  const handleLogout = async () => {
+    try { await authApi.logout(); } catch {}
+    logout();
+    setProjects([]);
+    reset();
+    navigate('/');
+  };
+
+  return (
+    <>
+      <Dashboard
+        isLoading={loading}
+        steps={steps}
+        stepOrder={stepOrder}
+        error={error}
+        result={result}
+        onNewAnalysis={() => { reset(); navigate('/'); }}
+        user={user}
+        onShowProjects={() => setShowProjects(true)}
+        onLogout={handleLogout}
+      />
+
+      <ProjectsSidebar
+        open={showProjects}
+        onClose={() => setShowProjects(false)}
+        projects={projects}
+        activeProjectId={id ?? null}
+        onOpenProject={(p) => { setShowProjects(false); reset(); navigate(`/project/${p.id}`); }}
+        onDeleteProject={async (pid) => {
+          await projectsApi.delete(pid);
+          loadProjects();
+          if (pid === id) { reset(); navigate('/'); }
+        }}
+        plan={user?.plan ?? 'free'}
+      />
+    </>
+  );
+}
+
+// ─── Root ─────────────────────────────────────────────────────────────────────
+
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/project/:id" element={<ProjectPage />} />
+    </Routes>
   );
 }

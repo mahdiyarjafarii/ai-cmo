@@ -76,12 +76,13 @@ export async function subscribeToAnalysis(
 }
 
 export async function sendChatMessage(
-  analysisId: string,
   message: string,
-  history: ChatMessage[]
+  history: ChatMessage[],
+  ids: { analysisId?: string | null; projectId?: string | null }
 ): Promise<string> {
   const response = await api.post('/api/chat', {
-    analysisId,
+    analysisId: ids.analysisId ?? undefined,
+    projectId: ids.projectId ?? undefined,
     message,
     history: history.map((m) => ({ role: m.role, content: m.content })),
   });

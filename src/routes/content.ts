@@ -1,4 +1,5 @@
 import { Router, Request, Response } from "express";
+import { v4 as uuidv4 } from "uuid";
 import { AnalysisResult, TwitterFeed, LinkedInFeed, RedditFeed, SeoReport } from "../types/index.js";
 import {
   generateDailyContent,
@@ -10,19 +11,40 @@ import { generateTwitterFeed, rewriteTwitterPost } from "../services/content/twi
 import { generateLinkedInFeed, rewriteLinkedInPost } from "../services/content/linkedin-generator.js";
 import { findRedditOpportunities } from "../services/content/reddit-service.js";
 import { generateSeoReport } from "../services/content/seo-analyzer.js";
+import db from "../lib/db.js";
 import logger from "../logger.js";
-
-// ─── In-memory caches per-channel ────────────────────────────────────────────
-
-const twitterCache = new Map<string, TwitterFeed>();
-const linkedinCache = new Map<string, LinkedInFeed>();
-const redditCache = new Map<string, RedditFeed>();
-const seoCache = new Map<string, SeoReport>();
 
 function getLatestResult(analysisResults: Map<string, AnalysisResult>): [string, AnalysisResult] | null {
   const entries = Array.from(analysisResults.entries());
   if (entries.length === 0) return null;
   return entries[entries.length - 1];
+}
+
+function getResultForProject(
+  projectId: string | undefined,
+  analysisResults: Map<string, AnalysisResult>
+): AnalysisResult | null {
+  if (projectId) {
+    const project = db.prepare("SELECT url FROM projects WHERE id = ?").get(projectId) as { url: string } | undefined;
+    if (project) {
+      const cache = db.prepare("SELECT data FROM crawl_cache WHERE url = ?").get(project.url) as { data: string } | undefined;
+      if (cache) return JSON.parse(cache.data) as AnalysisResult;
+    }
+  }
+  return getLatestResult(analysisResults)?.[1] ?? null;
+}
+
+function saveProjectContent(projectId: string, type: string, data: unknown): void {
+  db.prepare(`
+    INSERT INTO project_content (id, project_id, type, data)
+    VALUES (?, ?, ?, ?)
+    ON CONFLICT(project_id, type) DO UPDATE SET data = excluded.data, updated_at = datetime('now')
+  `).run(uuidv4(), projectId, type, JSON.stringify(data));
+}
+
+function loadProjectContent<T>(projectId: string, type: string): T | null {
+  const row = db.prepare("SELECT data FROM project_content WHERE project_id = ? AND type = ?").get(projectId, type) as { data: string } | undefined;
+  return row ? JSON.parse(row.data) as T : null;
 }
 
 export function createContentRouter(analysisResults: Map<string, AnalysisResult>) {
@@ -73,22 +95,26 @@ export function createContentRouter(analysisResults: Map<string, AnalysisResult>
 
   // ─── Twitter ──────────────────────────────────────────────────────────────
 
-  router.get("/content/twitter", (_req: Request, res: Response) => {
-    const sorted = Array.from(twitterCache.values()).sort(
-      (a, b) => new Date(b.generatedAt).getTime() - new Date(a.generatedAt).getTime()
-    );
-    res.json({ feed: sorted[0] ?? null });
+  router.get("/content/twitter", (req: Request, res: Response) => {
+    const { projectId } = req.query as { projectId?: string };
+    if (projectId) {
+      const feed = loadProjectContent<TwitterFeed>(projectId, "twitter");
+      res.json({ feed });
+      return;
+    }
+    res.json({ feed: null });
   });
 
-  router.post("/content/twitter/generate", async (_req: Request, res: Response) => {
-    const entry = getLatestResult(analysisResults);
-    if (!entry) {
+  router.post("/content/twitter/generate", async (req: Request, res: Response) => {
+    const { projectId } = req.body as { projectId?: string };
+    const result = getResultForProject(projectId, analysisResults);
+    if (!result) {
       res.status(400).json({ error: "No analysis found." });
       return;
     }
     try {
-      const feed = await generateTwitterFeed(entry[1]);
-      twitterCache.set(feed.generatedAt, feed);
+      const feed = await generateTwitterFeed(result);
+      if (projectId) saveProjectContent(projectId, "twitter", feed);
       res.json({ feed });
     } catch (err) {
       logger.error(`Twitter generation failed: ${err}`);
@@ -98,21 +124,26 @@ export function createContentRouter(analysisResults: Map<string, AnalysisResult>
 
   router.post("/content/twitter/rewrite/:postId", async (req: Request, res: Response) => {
     const { postId } = req.params;
-    const entry = getLatestResult(analysisResults);
-    if (!entry) { res.status(400).json({ error: "No analysis found." }); return; }
+    const { projectId } = req.body as { projectId?: string };
+    const result = getResultForProject(projectId, analysisResults);
+    if (!result) { res.status(400).json({ error: "No analysis found." }); return; }
 
-    let found: { feedKey: string; postIndex: number } | null = null;
-    for (const [key, feed] of twitterCache.entries()) {
-      const idx = feed.posts.findIndex((p) => p.id === postId);
-      if (idx !== -1) { found = { feedKey: key, postIndex: idx }; break; }
+    let currentFeed: TwitterFeed | null = null;
+    if (projectId) {
+      currentFeed = loadProjectContent<TwitterFeed>(projectId, "twitter");
     }
-    if (!found) { res.status(404).json({ error: "Post not found" }); return; }
+    if (!currentFeed) {
+      res.status(404).json({ error: "Feed not found. Generate first." });
+      return;
+    }
+
+    const postIndex = currentFeed.posts.findIndex((p) => p.id === postId);
+    if (postIndex === -1) { res.status(404).json({ error: "Post not found" }); return; }
 
     try {
-      const feed = twitterCache.get(found.feedKey)!;
-      const post = feed.posts[found.postIndex];
-      const newPost = await rewriteTwitterPost(post, entry[1]);
-      feed.posts[found.postIndex] = newPost;
+      const newPost = await rewriteTwitterPost(currentFeed.posts[postIndex], result);
+      currentFeed.posts[postIndex] = newPost;
+      if (projectId) saveProjectContent(projectId, "twitter", currentFeed);
       res.json({ post: newPost });
     } catch (err) {
       res.status(500).json({ error: "Rewrite failed" });
@@ -121,19 +152,23 @@ export function createContentRouter(analysisResults: Map<string, AnalysisResult>
 
   // ─── LinkedIn ─────────────────────────────────────────────────────────────
 
-  router.get("/content/linkedin", (_req: Request, res: Response) => {
-    const feeds = Array.from(linkedinCache.values()).sort(
-      (a, b) => new Date(b.generatedAt).getTime() - new Date(a.generatedAt).getTime()
-    );
-    res.json({ feed: feeds[0] ?? null });
+  router.get("/content/linkedin", (req: Request, res: Response) => {
+    const { projectId } = req.query as { projectId?: string };
+    if (projectId) {
+      const feed = loadProjectContent<LinkedInFeed>(projectId, "linkedin");
+      res.json({ feed });
+      return;
+    }
+    res.json({ feed: null });
   });
 
-  router.post("/content/linkedin/generate", async (_req: Request, res: Response) => {
-    const entry = getLatestResult(analysisResults);
-    if (!entry) { res.status(400).json({ error: "No analysis found." }); return; }
+  router.post("/content/linkedin/generate", async (req: Request, res: Response) => {
+    const { projectId } = req.body as { projectId?: string };
+    const result = getResultForProject(projectId, analysisResults);
+    if (!result) { res.status(400).json({ error: "No analysis found." }); return; }
     try {
-      const feed = await generateLinkedInFeed(entry[1]);
-      linkedinCache.set(feed.generatedAt, feed);
+      const feed = await generateLinkedInFeed(result);
+      if (projectId) saveProjectContent(projectId, "linkedin", feed);
       res.json({ feed });
     } catch (err) {
       logger.error(`LinkedIn generation failed: ${err}`);
@@ -143,21 +178,26 @@ export function createContentRouter(analysisResults: Map<string, AnalysisResult>
 
   router.post("/content/linkedin/rewrite/:postId", async (req: Request, res: Response) => {
     const { postId } = req.params;
-    const entry = getLatestResult(analysisResults);
-    if (!entry) { res.status(400).json({ error: "No analysis found." }); return; }
+    const { projectId } = req.body as { projectId?: string };
+    const result = getResultForProject(projectId, analysisResults);
+    if (!result) { res.status(400).json({ error: "No analysis found." }); return; }
 
-    let found: { feedKey: string; postIndex: number } | null = null;
-    for (const [key, feed] of linkedinCache.entries()) {
-      const idx = feed.posts.findIndex((p) => p.id === postId);
-      if (idx !== -1) { found = { feedKey: key, postIndex: idx }; break; }
+    let currentFeed: LinkedInFeed | null = null;
+    if (projectId) {
+      currentFeed = loadProjectContent<LinkedInFeed>(projectId, "linkedin");
     }
-    if (!found) { res.status(404).json({ error: "Post not found" }); return; }
+    if (!currentFeed) {
+      res.status(404).json({ error: "Feed not found. Generate first." });
+      return;
+    }
+
+    const postIndex = currentFeed.posts.findIndex((p) => p.id === postId);
+    if (postIndex === -1) { res.status(404).json({ error: "Post not found" }); return; }
 
     try {
-      const feed = linkedinCache.get(found.feedKey)!;
-      const post = feed.posts[found.postIndex];
-      const newPost = await rewriteLinkedInPost(post, entry[1]);
-      feed.posts[found.postIndex] = newPost;
+      const newPost = await rewriteLinkedInPost(currentFeed.posts[postIndex], result);
+      currentFeed.posts[postIndex] = newPost;
+      if (projectId) saveProjectContent(projectId, "linkedin", currentFeed);
       res.json({ post: newPost });
     } catch (err) {
       res.status(500).json({ error: "Rewrite failed" });
@@ -166,19 +206,23 @@ export function createContentRouter(analysisResults: Map<string, AnalysisResult>
 
   // ─── Reddit ───────────────────────────────────────────────────────────────
 
-  router.get("/content/reddit", (_req: Request, res: Response) => {
-    const feeds = Array.from(redditCache.values()).sort(
-      (a, b) => new Date(b.fetchedAt).getTime() - new Date(a.fetchedAt).getTime()
-    );
-    res.json({ feed: feeds[0] ?? null });
+  router.get("/content/reddit", (req: Request, res: Response) => {
+    const { projectId } = req.query as { projectId?: string };
+    if (projectId) {
+      const feed = loadProjectContent<RedditFeed>(projectId, "reddit");
+      res.json({ feed });
+      return;
+    }
+    res.json({ feed: null });
   });
 
-  router.post("/content/reddit/find", async (_req: Request, res: Response) => {
-    const entry = getLatestResult(analysisResults);
-    if (!entry) { res.status(400).json({ error: "No analysis found." }); return; }
+  router.post("/content/reddit/find", async (req: Request, res: Response) => {
+    const { projectId } = req.body as { projectId?: string };
+    const result = getResultForProject(projectId, analysisResults);
+    if (!result) { res.status(400).json({ error: "No analysis found." }); return; }
     try {
-      const feed = await findRedditOpportunities(entry[1]);
-      redditCache.set(feed.fetchedAt, feed);
+      const feed = await findRedditOpportunities(result);
+      if (projectId) saveProjectContent(projectId, "reddit", feed);
       res.json({ feed });
     } catch (err) {
       logger.error(`Reddit search failed: ${err}`);
@@ -188,19 +232,23 @@ export function createContentRouter(analysisResults: Map<string, AnalysisResult>
 
   // ─── SEO ──────────────────────────────────────────────────────────────────
 
-  router.get("/content/seo", (_req: Request, res: Response) => {
-    const reports = Array.from(seoCache.values()).sort(
-      (a, b) => new Date(b.generatedAt).getTime() - new Date(a.generatedAt).getTime()
-    );
-    res.json({ report: reports[0] ?? null });
+  router.get("/content/seo", (req: Request, res: Response) => {
+    const { projectId } = req.query as { projectId?: string };
+    if (projectId) {
+      const report = loadProjectContent<SeoReport>(projectId, "seo");
+      res.json({ report });
+      return;
+    }
+    res.json({ report: null });
   });
 
-  router.post("/content/seo/generate", async (_req: Request, res: Response) => {
-    const entry = getLatestResult(analysisResults);
-    if (!entry) { res.status(400).json({ error: "No analysis found." }); return; }
+  router.post("/content/seo/generate", async (req: Request, res: Response) => {
+    const { projectId } = req.body as { projectId?: string };
+    const result = getResultForProject(projectId, analysisResults);
+    if (!result) { res.status(400).json({ error: "No analysis found." }); return; }
     try {
-      const report = await generateSeoReport(entry[1]);
-      seoCache.set(report.generatedAt, report);
+      const report = await generateSeoReport(result);
+      if (projectId) saveProjectContent(projectId, "seo", report);
       res.json({ report });
     } catch (err) {
       logger.error(`SEO analysis failed: ${err}`);

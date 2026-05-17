@@ -11,6 +11,7 @@ import { XWriterDrawer } from './drawers/XWriterDrawer';
 import { LinkedInDrawer } from './drawers/LinkedInDrawer';
 import { RedditDrawer } from './drawers/RedditDrawer';
 import { SeoDrawer } from './drawers/SeoDrawer';
+import { useAnalysisStore } from '../store/analysisStore';
 
 interface ActionsPanelProps {
   result: AnalysisResult;
@@ -146,11 +147,8 @@ const ChannelCard: React.FC<{
       whileHover={{ y: -2, scale: 1.005 }}
       whileTap={{ scale: 0.99 }}
       className={`w-full text-left rounded-2xl border ${channel.borderColor} bg-gradient-to-br ${channel.bgGradient} transition-all group relative overflow-hidden`}
-      style={{
-        boxShadow: `0 0 0 0 ${channel.glowColor}`,
-      }}
+      style={{ boxShadow: `0 0 0 0 ${channel.glowColor}` }}
     >
-      {/* Hover glow */}
       <div
         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"
         style={{ boxShadow: `inset 0 0 20px ${channel.glowColor}` }}
@@ -158,7 +156,6 @@ const ChannelCard: React.FC<{
 
       <div className="relative p-4">
         <div className="flex items-start justify-between gap-3">
-          {/* Platform icon + info */}
           <div className="flex items-center gap-3">
             <div className={`w-10 h-10 rounded-xl ${channel.iconBg} ${channel.iconColor} flex items-center justify-center shrink-0 shadow-lg`}>
               {channel.icon}
@@ -169,7 +166,6 @@ const ChannelCard: React.FC<{
             </div>
           </div>
 
-          {/* Arrow + badge */}
           <div className="flex flex-col items-end gap-1.5 shrink-0">
             <div className="w-6 h-6 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-slate-500 group-hover:text-slate-300 group-hover:bg-white/[0.08] transition-all">
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -184,7 +180,6 @@ const ChannelCard: React.FC<{
           </div>
         </div>
 
-        {/* Status bar */}
         <div className="mt-3 pt-3 border-t border-white/[0.04] flex items-center justify-between">
           <div className={`flex items-center gap-1.5 text-[10px] font-medium ${isReady ? 'text-green-400' : 'text-slate-600'}`}>
             <span className={`w-1.5 h-1.5 rounded-full ${isReady ? 'bg-green-400 animate-pulse' : 'bg-slate-700'}`} />
@@ -203,13 +198,24 @@ const ChannelCard: React.FC<{
 
 export const ActionsPanel: React.FC<ActionsPanelProps> = ({ result }) => {
   const [activeDrawer, setActiveDrawer] = useState<ChannelConfig['id'] | null>(null);
-  const [twitterFeed, setTwitterFeed] = useState<TwitterFeed | null>(null);
-  const [linkedinFeed, setLinkedinFeed] = useState<LinkedInFeed | null>(null);
-  const [redditFeed, setRedditFeed] = useState<RedditFeed | null>(null);
-  const [seoReport, setSeoReport] = useState<SeoReport | null>(null);
+
+  const {
+    projectId,
+    twitterFeed, setTwitterFeed,
+    linkedinFeed, setLinkedinFeed,
+    redditFeed, setRedditFeed,
+    seoReport, setSeoReport,
+  } = useAnalysisStore();
+
+  const postBody = (extra?: Record<string, unknown>) =>
+    JSON.stringify({ projectId, ...extra });
 
   const generateTwitter = async (): Promise<TwitterFeed> => {
-    const res = await fetch(`${API_BASE}/api/content/twitter/generate`, { method: 'POST' });
+    const res = await fetch(`${API_BASE}/api/content/twitter/generate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: postBody(),
+    });
     if (!res.ok) throw new Error((await res.json()).error ?? 'Failed');
     const data = await res.json();
     setTwitterFeed(data.feed);
@@ -217,17 +223,25 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({ result }) => {
   };
 
   const rewriteTwitter = async (postId: string): Promise<TwitterPost> => {
-    const res = await fetch(`${API_BASE}/api/content/twitter/rewrite/${postId}`, { method: 'POST' });
+    const res = await fetch(`${API_BASE}/api/content/twitter/rewrite/${postId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: postBody(),
+    });
     if (!res.ok) throw new Error('Rewrite failed');
     const data = await res.json();
-    setTwitterFeed((prev) =>
-      prev ? { ...prev, posts: prev.posts.map((p) => p.id === postId ? data.post : p) } : prev
-    );
+    if (twitterFeed) {
+      setTwitterFeed({ ...twitterFeed, posts: twitterFeed.posts.map((p) => p.id === postId ? data.post : p) });
+    }
     return data.post;
   };
 
   const generateLinkedIn = async (): Promise<LinkedInFeed> => {
-    const res = await fetch(`${API_BASE}/api/content/linkedin/generate`, { method: 'POST' });
+    const res = await fetch(`${API_BASE}/api/content/linkedin/generate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: postBody(),
+    });
     if (!res.ok) throw new Error((await res.json()).error ?? 'Failed');
     const data = await res.json();
     setLinkedinFeed(data.feed);
@@ -235,17 +249,25 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({ result }) => {
   };
 
   const rewriteLinkedIn = async (postId: string): Promise<LinkedInPost> => {
-    const res = await fetch(`${API_BASE}/api/content/linkedin/rewrite/${postId}`, { method: 'POST' });
+    const res = await fetch(`${API_BASE}/api/content/linkedin/rewrite/${postId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: postBody(),
+    });
     if (!res.ok) throw new Error('Rewrite failed');
     const data = await res.json();
-    setLinkedinFeed((prev) =>
-      prev ? { ...prev, posts: prev.posts.map((p) => p.id === postId ? data.post : p) } : prev
-    );
+    if (linkedinFeed) {
+      setLinkedinFeed({ ...linkedinFeed, posts: linkedinFeed.posts.map((p) => p.id === postId ? data.post : p) });
+    }
     return data.post;
   };
 
   const findReddit = async (): Promise<RedditFeed> => {
-    const res = await fetch(`${API_BASE}/api/content/reddit/find`, { method: 'POST' });
+    const res = await fetch(`${API_BASE}/api/content/reddit/find`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: postBody(),
+    });
     if (!res.ok) throw new Error((await res.json()).error ?? 'Failed');
     const data = await res.json();
     setRedditFeed(data.feed);
@@ -253,7 +275,11 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({ result }) => {
   };
 
   const generateSeo = async (): Promise<SeoReport> => {
-    const res = await fetch(`${API_BASE}/api/content/seo/generate`, { method: 'POST' });
+    const res = await fetch(`${API_BASE}/api/content/seo/generate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: postBody(),
+    });
     if (!res.ok) throw new Error((await res.json()).error ?? 'Failed');
     const data = await res.json();
     setSeoReport(data.report);
@@ -270,16 +296,12 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({ result }) => {
   return (
     <>
       <div className="flex flex-col h-full">
-        {/* Header */}
         <div className="shrink-0 relative border-b border-white/[0.04]">
           <div className="flex items-center px-4 py-3 gap-2.5">
             <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
             </svg>
-            <p className="text-[13px] font-semibold text-slate-100 tracking-tight">Actions Feed
-
-
-</p>
+            <p className="text-[13px] font-semibold text-slate-100 tracking-tight">Actions Feed</p>
           </div>
         </div>
 
@@ -294,7 +316,6 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({ result }) => {
             />
           ))}
 
-          {/* Footer */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

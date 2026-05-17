@@ -157,7 +157,7 @@ const MarkdownMessage: React.FC<{ content: string }> = ({ content }) => {
 };
 
 export const ChatPanel: React.FC<ChatPanelProps> = ({ result }) => {
-  const { analysisId, chat, addChatMessage } = useAnalysisStore();
+  const { analysisId, projectId, chat, addChatMessage } = useAnalysisStore();
   const [input, setInput] = useState('');
   const [isThinking, setIsThinking] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -171,7 +171,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ result }) => {
   const send = useCallback(
     async (text: string) => {
       const msg = text.trim();
-      if (!msg || isThinking || !analysisId) return;
+      if (!msg || isThinking || (!analysisId && !projectId)) return;
       setInput('');
       setError(null);
 
@@ -184,7 +184,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ result }) => {
       setIsThinking(true);
 
       try {
-        const reply = await sendChatMessage(analysisId, msg, chat);
+        const reply = await sendChatMessage(msg, chat, { analysisId, projectId });
         addChatMessage({
           id: crypto.randomUUID(),
           role: 'assistant',
@@ -198,7 +198,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ result }) => {
         inputRef.current?.focus();
       }
     },
-    [analysisId, chat, addChatMessage, isThinking]
+    [analysisId, projectId, chat, addChatMessage, isThinking]
   );
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

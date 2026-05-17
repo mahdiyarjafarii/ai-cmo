@@ -1,4 +1,5 @@
 import axios from "axios";
+import { TwitterFeed, LinkedInFeed, RedditFeed, SeoReport } from "../types";
 
 const api = axios.create({
   baseURL: "/api",
@@ -56,7 +57,16 @@ export const projectsApi = {
     api.post<{ project: Project; cached: boolean; message: string }>("/projects", data),
 
   get: (id: string) =>
-    api.get<{ project: Project; analysisResult: unknown }>(`/projects/${id}`),
+    api.get<{
+      project: Project;
+      analysisResult: unknown;
+      content: {
+        twitter?: TwitterFeed;
+        linkedin?: LinkedInFeed;
+        reddit?: RedditFeed;
+        seo?: SeoReport;
+      };
+    }>(`/projects/${id}`),
 
   delete: (id: string) => api.delete(`/projects/${id}`),
 };

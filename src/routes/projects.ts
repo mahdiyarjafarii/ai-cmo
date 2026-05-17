@@ -94,9 +94,18 @@ router.get("/:id", requireAuth, async (req: AuthRequest, res: Response): Promise
 
   const cache = db.prepare("SELECT data FROM crawl_cache WHERE url = ?").get(project.url as string) as { data: string } | undefined;
 
+  const contentRows = db.prepare(
+    "SELECT type, data FROM project_content WHERE project_id = ?"
+  ).all(req.params.id) as { type: string; data: string }[];
+
+  const content = Object.fromEntries(
+    contentRows.map((r) => [r.type, JSON.parse(r.data)])
+  );
+
   res.json({
     project,
     analysisResult: cache ? JSON.parse(cache.data) : null,
+    content,
   });
 });
 
