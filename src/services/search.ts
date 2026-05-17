@@ -1,7 +1,7 @@
 import axios from "axios";
-import logger from "../logger";
-import { config } from "../config";
-import { SearchResult } from "../types";
+import logger from "../logger.js";
+import { config } from "../config.js";
+import { SearchResult } from "../types/index.js";
 
 const TAVILY_API_BASE = "https://api.tavily.com/search";
 

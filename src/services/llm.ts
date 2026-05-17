@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import OpenAI from "openai";
-import logger from "../logger";
-import { config } from "../config";
+import logger from "../logger.js";
+import { config } from "../config.js";
 
 export interface LLMMessage {
   role: "user" | "assistant";

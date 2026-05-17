@@ -1,6 +1,6 @@
 import axios from "axios";
-import logger from "../logger";
-import { config } from "../config";
+import logger from "../logger.js";
+import { config } from "../config.js";
 
 const BASE_URL =
   "https://www.googleapis.com/pagespeedonline/v5/runPagespeed";

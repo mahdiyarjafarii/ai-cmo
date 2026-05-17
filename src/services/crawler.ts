@@ -1,7 +1,7 @@
 import axios from "axios";
-import logger from "../logger";
-import { config } from "../config";
-import { WebsiteContent, CrawlResult } from "../types";
+import logger from "../logger.js";
+import { config } from "../config.js";
+import { WebsiteContent, CrawlResult } from "../types/index.js";
 
 const FIRECRAWL_BASE_URL = "https://api.firecrawl.dev/v1";
 

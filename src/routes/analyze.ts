@@ -1,14 +1,14 @@
 import { Router, Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
-import { CompanyAnalysisAgent } from "../agent/analyzer";
+import { CompanyAnalysisAgent } from "../agent/analyzer.js";
 import {
   streamManager,
   emitError,
   emitComplete,
   createStepEmitter,
-} from "../services/streaming";
-import { AnalysisResult } from "../types";
-import logger from "../logger";
+} from "../services/streaming.js";
+import { AnalysisResult } from "../types/index.js";
+import logger from "../logger.js";
 import db from "../lib/db.js";
 
 export function buildAnalyzeRouter(

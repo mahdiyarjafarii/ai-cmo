@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
-import { fetchPageSpeedData } from "../services/pagespeed";
-import { config } from "../config";
-import logger from "../logger";
+import { fetchPageSpeedData } from "../services/pagespeed.js";
+import { config } from "../config.js";
+import logger from "../logger.js";
 
 export function createPageSpeedRouter(): Router {
   const router = Router();

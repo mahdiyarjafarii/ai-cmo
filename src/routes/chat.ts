@@ -1,9 +1,9 @@
 import { Router, Request, Response } from "express";
-import { LLMService, LLMMessage } from "../services/llm";
-import { PROMPTS } from "../prompts";
-import { AnalysisResult } from "../types";
+import { LLMService, LLMMessage } from "../services/llm.js";
+import { PROMPTS } from "../prompts/index.js";
+import { AnalysisResult } from "../types/index.js";
 import db from "../lib/db.js";
-import logger from "../logger";
+import logger from "../logger.js";
 
 /**
  * Builds a chat router that uses the same in-memory results store

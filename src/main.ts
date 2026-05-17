@@ -2,10 +2,10 @@ import fs from "fs";
 import path from "path";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
-import { config, validateConfig } from "./config";
-import logger from "./logger";
-import { CompanyAnalysisAgent } from "./agent/analyzer";
-import { ReportFormatter } from "./formatters/report";
+import { config, validateConfig } from "./config.js";
+import logger from "./logger.js";
+import { CompanyAnalysisAgent } from "./agent/analyzer.js";
+import { ReportFormatter } from "./formatters/report.js";
 
 async function main(): Promise<void> {
   try {

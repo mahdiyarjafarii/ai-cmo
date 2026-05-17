@@ -1,4 +1,4 @@
-import { AnalysisResult } from "../types";
+import { AnalysisResult } from "../types/index.js";
 
 export class ReportFormatter {
   static generateMarkdown(result: AnalysisResult): string {

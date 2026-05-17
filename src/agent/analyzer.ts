@@ -1,13 +1,13 @@
-import logger from "../logger";
-import { AgentTools } from "../tools";
-import { WebCrawler } from "../services/crawler";
-import { StepEmitter } from "../services/streaming";
+import logger from "../logger.js";
+import { AgentTools } from "../tools/index.js";
+import { WebCrawler } from "../services/crawler.js";
+import { StepEmitter } from "../services/streaming.js";
 import {
   AnalysisResult,
   CompanyProfile,
   Competitor,
   CompetitorAnalysis,
-} from "../types";
+} from "../types/index.js";
 
 const noopEmit: StepEmitter = () => {};
 

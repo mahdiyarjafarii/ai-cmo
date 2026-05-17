@@ -1,4 +1,4 @@
-import { StepEvent, StepStatus } from "../types";
+import { StepEvent, StepStatus } from "../types/index.js";
 
 export interface StreamMessage {
   type: "progress" | "error" | "complete" | "step";

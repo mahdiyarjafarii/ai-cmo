@@ -1,15 +1,15 @@
-import { WebCrawler } from "../services/crawler";
-import { CompetitorSearch } from "../services/search";
-import { LLMService } from "../services/llm";
-import { enrichCompetitors } from "../services/enrichment";
-import { PROMPTS } from "../prompts";
-import logger from "../logger";
+import { WebCrawler } from "../services/crawler.js";
+import { CompetitorSearch } from "../services/search.js";
+import { LLMService } from "../services/llm.js";
+import { enrichCompetitors } from "../services/enrichment.js";
+import { PROMPTS } from "../prompts/index.js";
+import logger from "../logger.js";
 import {
   CompanyProfile,
   WebsiteContent,
   Competitor,
   SearchResult,
-} from "../types";
+} from "../types/index.js";
 
 interface FilteredCompetitor {
   name: string;
