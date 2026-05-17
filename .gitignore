@@ -33,8 +33,6 @@ pnpm-debug.log*
 # Output
 output/
 reports/
-*.json
-*.md
 
 # Testing
 coverage/
