@@ -57,17 +57,17 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
                 <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-blue-400 border-2 border-slate-950 animate-soft-pulse" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-slate-100">
+                <h1 className="text-2xl font-bold text-gray-900">
                   AI CMO is working...
                 </h1>
-                <p className="text-sm text-slate-400 mt-0.5">
+                <p className="text-sm text-gray-500 mt-0.5">
                   Crawling, analyzing and discovering competitors in real-time
                 </p>
               </div>
             </motion.div>
             <button
               onClick={onNewAnalysis}
-              className="px-4 py-2 text-sm bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition border border-slate-700"
+              className="px-4 py-2 text-sm bg-gray-100 hover:bg-slate-700 text-gray-700 rounded-lg transition border border-gray-300"
             >
               Cancel
             </button>
@@ -106,7 +106,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
                 <h1 className="text-3xl font-bold text-gradient">
                   Competitive Teardown
                 </h1>
-                <p className="text-slate-400 mt-1 text-sm">
+                <p className="text-gray-500 mt-1 text-sm">
                   {result.company.name} ·{' '}
                   {new Date(result.timestamp).toLocaleDateString()} ·{' '}
                   {result.competitors.length} competitors
@@ -145,14 +145,14 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-slate-800/50 rounded-lg border border-slate-700 group"
+            className="bg-gray-100/50 rounded-lg border border-gray-300 group"
           >
-            <summary className="cursor-pointer px-6 py-4 text-slate-100 font-semibold list-none flex items-center justify-between">
+            <summary className="cursor-pointer px-6 py-4 text-gray-900 font-semibold list-none flex items-center justify-between">
               <span className="flex items-center gap-2">
-                <span className="text-blue-400">▸</span>
+                <span className="text-blue-500">▸</span>
                 Agent Activity Log ({stepOrder.length} steps)
               </span>
-              <span className="text-xs text-slate-500">click to expand</span>
+              <span className="text-xs text-gray-400">click to expand</span>
             </summary>
             <div className="px-6 pb-6 h-96">
               <ProgressTerminal
@@ -184,7 +184,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
                   .replace(/\s+/g, '-')}.json`;
                 a.click();
               }}
-              className="px-6 py-2 bg-slate-700 hover:bg-slate-600 text-slate-100 rounded transition font-medium"
+              className="px-6 py-2 bg-slate-700 hover:bg-slate-600 text-gray-900 rounded transition font-medium"
             >
               Download JSON
             </button>
@@ -200,7 +200,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
                   .replace(/\s+/g, '-')}.md`;
                 a.click();
               }}
-              className="px-6 py-2 bg-slate-700 hover:bg-slate-600 text-slate-100 rounded transition font-medium"
+              className="px-6 py-2 bg-slate-700 hover:bg-slate-600 text-gray-900 rounded transition font-medium"
             >
               Download Markdown
             </button>
@@ -217,10 +217,10 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
         >
           <div className="max-w-md text-center">
             <div className="text-6xl mb-4">⚠️</div>
-            <h2 className="text-2xl font-bold text-slate-100 mb-2">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
               Analysis Failed
             </h2>
-            <p className="text-slate-400 mb-6">{error}</p>
+            <p className="text-gray-500 mb-6">{error}</p>
             <button
               onClick={onNewAnalysis}
               className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition font-medium"

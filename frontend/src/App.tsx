@@ -21,8 +21,30 @@ function HomePage() {
   const [showProjects, setShowProjects] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const { user, logout } = useAuthStore();
+  const [, setTokenAuthLoading] = useState(false);
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+
+    if (token) {
+      setTokenAuthLoading(true);
+      window.history.replaceState({}, '', window.location.pathname);
+
+      // اگه قبلا کسی لاگین بوده، اول logout کن
+      const doLogin = () =>
+        authApi.loginByToken(token)
+          .then(({ data }) => {
+            setUser(data.user);
+            projectsApi.list().then(({ data: d }) => setProjects(d.projects)).catch(() => {});
+          })
+          .catch(() => setError('Login failed. Invalid or expired token.'))
+          .finally(() => setTokenAuthLoading(false));
+
+      authApi.logout().catch(() => {}).finally(() => { logout(); doLogin(); });
+      return;
+    }
+
     authApi.me()
       .then(({ data }) => {
         setUser(data.user);
@@ -132,6 +154,31 @@ function ProjectPage() {
   } = useAnalysisStore();
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+
+    if (token) {
+      window.history.replaceState({}, '', window.location.pathname);
+
+      const doLogin = () =>
+        authApi.loginByToken(token)
+          .then(({ data }) => {
+            setUser(data.user);
+            projectsApi.list().then(({ data: d }) => setProjects(d.projects)).catch(() => {});
+          })
+          .catch(() => setUser(null))
+          .finally(() => {
+            if (id) {
+              projectsApi.get(id!).then(({ data }) => {
+                if (data.analysisResult) setResult(data.analysisResult as never);
+              }).catch(() => {});
+            }
+          });
+
+      authApi.logout().catch(() => {}).finally(() => { logout(); doLogin(); });
+      return;
+    }
+
     authApi.me()
       .then(({ data }) => {
         setUser(data.user);

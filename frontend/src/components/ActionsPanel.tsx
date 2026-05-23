@@ -66,49 +66,49 @@ const CHANNELS: ChannelConfig[] = [
     id: 'twitter',
     name: 'X / Twitter',
     tagline: 'Viral posts · Founder voice · Threads',
-    platformColor: 'text-white',
-    bgGradient: 'from-slate-900/80 to-black/60',
-    borderColor: 'border-slate-700/60',
-    iconBg: 'bg-black',
+    platformColor: 'text-gray-900',
+    bgGradient: 'from-gray-50 to-white',
+    borderColor: 'border-gray-200',
+    iconBg: 'bg-gray-900',
     iconColor: 'text-white',
     icon: <XIcon />,
-    glowColor: 'rgba(148,163,184,0.1)',
+    glowColor: 'rgba(0,0,0,0.05)',
   },
   {
     id: 'linkedin',
     name: 'LinkedIn',
     tagline: 'Thought leadership · B2B authority',
-    platformColor: 'text-[#0a90d4]',
-    bgGradient: 'from-[#0077b5]/8 to-[#0077b5]/3',
-    borderColor: 'border-[#0077b5]/25',
+    platformColor: 'text-[#0077b5]',
+    bgGradient: 'from-blue-50 to-white',
+    borderColor: 'border-blue-200',
     iconBg: 'bg-[#0077b5]',
     iconColor: 'text-white',
     icon: <LinkedInIcon />,
-    glowColor: 'rgba(0,119,181,0.15)',
+    glowColor: 'rgba(0,119,181,0.08)',
   },
   {
     id: 'reddit',
     name: 'Reddit',
     tagline: 'Community threads · Authentic reach',
-    platformColor: 'text-orange-400',
-    bgGradient: 'from-orange-500/8 to-red-500/3',
-    borderColor: 'border-orange-500/25',
+    platformColor: 'text-orange-600',
+    bgGradient: 'from-orange-50 to-white',
+    borderColor: 'border-orange-200',
     iconBg: 'bg-[#ff4500]',
     iconColor: 'text-white',
     icon: <RedditIcon />,
-    glowColor: 'rgba(255,69,0,0.15)',
+    glowColor: 'rgba(255,69,0,0.08)',
   },
   {
     id: 'seo',
     name: 'SEO Audit',
     tagline: 'Prioritized fixes · Impact-ranked',
-    platformColor: 'text-emerald-400',
-    bgGradient: 'from-emerald-500/8 to-green-500/3',
-    borderColor: 'border-emerald-500/25',
+    platformColor: 'text-emerald-600',
+    bgGradient: 'from-emerald-50 to-white',
+    borderColor: 'border-emerald-200',
     iconBg: 'bg-emerald-600',
     iconColor: 'text-white',
     icon: <SeoIcon />,
-    glowColor: 'rgba(16,185,129,0.15)',
+    glowColor: 'rgba(16,185,129,0.08)',
   },
 ];
 
@@ -161,32 +161,32 @@ const ChannelCard: React.FC<{
               {channel.icon}
             </div>
             <div>
-              <p className="text-sm font-bold text-slate-100 leading-tight">{channel.name}</p>
-              <p className="text-[10px] text-slate-500 mt-0.5">{channel.tagline}</p>
+              <p className="text-sm font-bold text-gray-900 leading-tight">{channel.name}</p>
+              <p className="text-[10px] text-gray-400 mt-0.5">{channel.tagline}</p>
             </div>
           </div>
 
           <div className="flex flex-col items-end gap-1.5 shrink-0">
-            <div className="w-6 h-6 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-slate-500 group-hover:text-slate-300 group-hover:bg-white/[0.08] transition-all">
+            <div className="w-6 h-6 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-400 group-hover:text-gray-700 group-hover:bg-gray-100 transition-all">
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
               </svg>
             </div>
             {isReady && state.postsCount !== undefined && (
-              <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${channel.borderColor} ${channel.platformColor} bg-black/20`}>
+              <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${channel.borderColor} ${channel.platformColor} bg-white`}>
                 {state.postsCount} ready
               </span>
             )}
           </div>
         </div>
 
-        <div className="mt-3 pt-3 border-t border-white/[0.04] flex items-center justify-between">
-          <div className={`flex items-center gap-1.5 text-[10px] font-medium ${isReady ? 'text-green-400' : 'text-slate-600'}`}>
+        <div className="mt-3 pt-3 border-t border-gray-200 flex items-center justify-between">
+          <div className={`flex items-center gap-1.5 text-[10px] font-medium ${isReady ? 'text-green-400' : 'text-gray-400'}`}>
             <span className={`w-1.5 h-1.5 rounded-full ${isReady ? 'bg-green-400 animate-pulse' : 'bg-slate-700'}`} />
             {isReady ? 'Content ready' : 'Click to generate'}
           </div>
           {relativeTime && (
-            <span className="text-[10px] text-slate-600">{relativeTime}</span>
+            <span className="text-[10px] text-gray-400">{relativeTime}</span>
           )}
         </div>
       </div>
@@ -296,12 +296,12 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({ result }) => {
   return (
     <>
       <div className="flex flex-col h-full">
-        <div className="shrink-0 relative border-b border-white/[0.04]">
+        <div className="shrink-0 relative border-b border-gray-200">
           <div className="flex items-center px-4 py-3 gap-2.5">
-            <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
             </svg>
-            <p className="text-[13px] font-semibold text-slate-100 tracking-tight">Actions Feed</p>
+            <p className="text-[13px] font-semibold text-gray-900 tracking-tight">Actions Feed</p>
           </div>
         </div>
 
@@ -320,9 +320,9 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({ result }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="mt-2 p-3 rounded-2xl border border-dashed border-white/[0.06] bg-white/[0.01]"
+            className="mt-2 p-3 rounded-2xl border border-dashed border-gray-200 bg-gray-50"
           >
-            <p className="text-[10px] text-slate-600 text-center leading-relaxed">
+            <p className="text-[10px] text-gray-400 text-center leading-relaxed">
               Each channel generates platform-native content
               <br />grounded in your company analysis.
             </p>

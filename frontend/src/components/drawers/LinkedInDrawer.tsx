@@ -33,19 +33,19 @@ const LinkedInPostCard: React.FC<{ post: LinkedInPost; isSelected: boolean; onCl
       onClick={onClick}
       whileHover={{ x: 2 }}
       className={`w-full text-left p-3 rounded-xl border transition-all ${
-        isSelected ? 'border-[#0077b5]/50 bg-[#0077b5]/10' : 'border-slate-800 bg-slate-900/30 hover:border-slate-700'
+        isSelected ? 'border-[#0077b5]/50 bg-[#0077b5]/10' : 'border-gray-200 bg-gray-50/30 hover:border-gray-300'
       }`}
     >
       <div className="flex items-center justify-between mb-2">
         <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${meta.color}`}>
           {meta.icon} {meta.label}
         </span>
-        <span className="text-[10px] text-slate-600">{post.readTime}</span>
+        <span className="text-[10px] text-gray-400">{post.readTime}</span>
       </div>
-      <p className="text-xs text-slate-200 font-medium line-clamp-2 leading-snug mb-1">
+      <p className="text-xs text-gray-800 font-medium line-clamp-2 leading-snug mb-1">
         {post.hook}
       </p>
-      <p className="text-[10px] text-slate-500">{post.estimatedReach} est. reach</p>
+      <p className="text-[10px] text-gray-400">{post.estimatedReach} est. reach</p>
     </motion.button>
   );
 };
@@ -59,7 +59,7 @@ const LinkedInPreviewCard: React.FC<{ post: LinkedInPost; editedText: string; co
   const initials = companyName.slice(0, 2).toUpperCase();
 
   return (
-    <div className="rounded-xl border border-slate-700 bg-[#1b1f2e] overflow-hidden">
+    <div className="rounded-xl border border-gray-300 bg-[#1b1f2e] overflow-hidden">
       {/* Header */}
       <div className="p-4 pb-0">
         <div className="flex items-start gap-3 mb-3">
@@ -68,22 +68,22 @@ const LinkedInPreviewCard: React.FC<{ post: LinkedInPost; editedText: string; co
           </div>
           <div>
             <p className="text-sm font-bold text-white">{companyName}</p>
-            <p className="text-[11px] text-slate-400">Founder · Building in AI SaaS</p>
-            <p className="text-[10px] text-slate-600 flex items-center gap-1 mt-0.5">
+            <p className="text-[11px] text-gray-500">Founder · Building in AI SaaS</p>
+            <p className="text-[10px] text-gray-400 flex items-center gap-1 mt-0.5">
               Just now · 🌐
             </p>
           </div>
         </div>
 
         {/* Content */}
-        <div className="text-[13px] text-slate-200 leading-relaxed whitespace-pre-wrap mb-2">
+        <div className="text-[13px] text-gray-800 leading-relaxed whitespace-pre-wrap mb-2">
           {preview}
           {needsExpand && !expanded && '…'}
         </div>
         {needsExpand && (
           <button
             onClick={() => setExpanded((e) => !e)}
-            className="text-[12px] text-slate-400 hover:text-slate-200 transition mb-2"
+            className="text-[12px] text-gray-500 hover:text-gray-800 transition mb-2"
           >
             {expanded ? 'see less' : 'see more'}
           </button>
@@ -91,15 +91,15 @@ const LinkedInPreviewCard: React.FC<{ post: LinkedInPost; editedText: string; co
       </div>
 
       {/* Stats */}
-      <div className="px-4 py-2.5 border-t border-slate-700/50 flex items-center justify-between text-[11px] text-slate-500">
-        <span>👍 ❤️ 💡 &nbsp;<span className="text-slate-400">{post.estimatedReach} est.</span></span>
+      <div className="px-4 py-2.5 border-t border-gray-300/50 flex items-center justify-between text-[11px] text-gray-400">
+        <span>👍 ❤️ 💡 &nbsp;<span className="text-gray-500">{post.estimatedReach} est.</span></span>
         <span>{Math.floor(Math.random() * 20 + 5)} comments</span>
       </div>
 
       {/* Action bar */}
-      <div className="px-2 py-1.5 border-t border-slate-700/50 flex items-center justify-around">
+      <div className="px-2 py-1.5 border-t border-gray-300/50 flex items-center justify-around">
         {[['👍', 'Like'], ['💬', 'Comment'], ['🔄', 'Repost'], ['↗', 'Share']].map(([icon, label]) => (
-          <button key={label} className="flex items-center gap-1 text-[11px] text-slate-500 hover:text-slate-300 px-3 py-1.5 rounded-lg hover:bg-slate-700/30 transition">
+          <button key={label} className="flex items-center gap-1 text-[11px] text-gray-400 hover:text-gray-700 px-3 py-1.5 rounded-lg hover:bg-slate-700/30 transition">
             {icon} {label}
           </button>
         ))}
@@ -171,17 +171,17 @@ export const LinkedInDrawer: React.FC<LinkedInDrawerProps> = ({
           <motion.div
             initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="fixed right-0 top-0 h-full w-full max-w-2xl bg-[#050714] border-l border-slate-800 z-50 flex flex-col"
+            className="fixed right-0 top-0 h-full w-full max-w-2xl bg-white border-l border-gray-200 z-50 flex flex-col"
           >
             {/* Header */}
-            <div className="shrink-0 flex items-center justify-between px-5 py-4 border-b border-slate-800 bg-[#0077b5]/5">
+            <div className="shrink-0 flex items-center justify-between px-5 py-4 border-b border-gray-200 bg-[#0077b5]/5">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl bg-[#0077b5] flex items-center justify-center text-white">
                   <LinkedInLogo />
                 </div>
                 <div>
                   <h2 className="text-sm font-bold text-white">LinkedIn Writer</h2>
-                  <p className="text-[11px] text-slate-500">Thought-leadership content · B2B storytelling</p>
+                  <p className="text-[11px] text-gray-400">Thought-leadership content · B2B storytelling</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -190,14 +190,14 @@ export const LinkedInDrawer: React.FC<LinkedInDrawerProps> = ({
                     {feed.posts.length} posts
                   </span>
                 )}
-                <button onClick={onClose} className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-500 hover:text-white hover:bg-slate-800 transition">✕</button>
+                <button onClick={onClose} className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-100 transition">✕</button>
               </div>
             </div>
 
             <div className="flex-1 min-h-0 flex overflow-hidden">
               {/* Post list */}
-              <div className="w-[200px] shrink-0 border-r border-slate-800 flex flex-col overflow-hidden">
-                <div className="px-3 py-3 border-b border-slate-800">
+              <div className="w-[200px] shrink-0 border-r border-gray-200 flex flex-col overflow-hidden">
+                <div className="px-3 py-3 border-b border-gray-200">
                   <button
                     onClick={handleGenerate} disabled={isGenerating}
                     className="w-full py-2 rounded-lg text-xs font-semibold bg-[#0077b5] text-white hover:bg-[#006396] transition disabled:opacity-50 flex items-center justify-center gap-1.5"
@@ -213,11 +213,11 @@ export const LinkedInDrawer: React.FC<LinkedInDrawerProps> = ({
                     ))
                   ) : isGenerating ? (
                     <div className="py-4 space-y-2">
-                      {[0,1,2].map(i => <div key={i} className="w-full h-16 rounded-xl bg-slate-800/50 animate-pulse" />)}
+                      {[0,1,2].map(i => <div key={i} className="w-full h-16 rounded-xl bg-gray-100/50 animate-pulse" />)}
                     </div>
                   ) : (
                     <div className="py-8 text-center px-2">
-                      <p className="text-[11px] text-slate-600">Generate posts to begin</p>
+                      <p className="text-[11px] text-gray-400">Generate posts to begin</p>
                     </div>
                   )}
                 </div>
@@ -227,16 +227,16 @@ export const LinkedInDrawer: React.FC<LinkedInDrawerProps> = ({
               {selected ? (
                 <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
                   {/* Format + tabs */}
-                  <div className="shrink-0 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between">
+                  <div className="shrink-0 px-4 py-2.5 border-b border-gray-200 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${FORMAT_META[selected.format].color}`}>
                         {FORMAT_META[selected.format].icon} {FORMAT_META[selected.format].label}
                       </span>
-                      <span className="text-[10px] text-slate-600">{selected.readTime}</span>
+                      <span className="text-[10px] text-gray-400">{selected.readTime}</span>
                     </div>
-                    <div className="flex rounded-lg overflow-hidden border border-slate-800">
+                    <div className="flex rounded-lg overflow-hidden border border-gray-200">
                       {(['preview', 'edit', 'why'] as const).map((t) => (
-                        <button key={t} onClick={() => setTab(t)} className={`px-3 py-1 text-[10px] font-semibold capitalize transition ${tab === t ? 'bg-slate-700 text-white' : 'text-slate-500 hover:text-slate-300'}`}>
+                        <button key={t} onClick={() => setTab(t)} className={`px-3 py-1 text-[10px] font-semibold capitalize transition ${tab === t ? 'bg-slate-700 text-white' : 'text-gray-400 hover:text-gray-700'}`}>
                           {t === 'why' ? 'Why' : t}
                         </button>
                       ))}
@@ -251,14 +251,14 @@ export const LinkedInDrawer: React.FC<LinkedInDrawerProps> = ({
                     {tab === 'edit' && (
                       <div>
                         <div className="flex items-center justify-between mb-1.5">
-                          <p className="text-[10px] uppercase tracking-wider text-slate-500">Edit Post</p>
-                          <span className="text-[10px] text-slate-600">{editedText.length} chars</span>
+                          <p className="text-[10px] uppercase tracking-wider text-gray-400">Edit Post</p>
+                          <span className="text-[10px] text-gray-400">{editedText.length} chars</span>
                         </div>
                         <textarea
                           ref={textareaRef}
                           value={editedText}
                           onChange={(e) => setEditedText(e.target.value)}
-                          className="w-full bg-slate-900/40 border border-slate-700 focus:border-[#0077b5]/50 rounded-xl text-sm text-slate-200 leading-relaxed resize-none outline-none px-4 py-3 min-h-[200px] transition-colors"
+                          className="w-full bg-gray-50 border border-gray-300 focus:border-[#0077b5]/50 rounded-xl text-sm text-gray-800 leading-relaxed resize-none outline-none px-4 py-3 min-h-[200px] transition-colors"
                         />
                       </div>
                     )}
@@ -270,28 +270,28 @@ export const LinkedInDrawer: React.FC<LinkedInDrawerProps> = ({
                             <div className="w-6 h-6 rounded-lg bg-[#0077b5]/20 flex items-center justify-center text-[#0a90d4] text-xs">✦</div>
                             <p className="text-xs font-bold text-[#0a90d4] uppercase tracking-wider">Why This Works</p>
                           </div>
-                          <p className="text-sm text-slate-300 leading-relaxed">{selected.whyThisWorks}</p>
+                          <p className="text-sm text-gray-700 leading-relaxed">{selected.whyThisWorks}</p>
                         </div>
-                        <div className="rounded-xl border border-slate-800 bg-slate-900/30 p-4">
-                          <p className="text-[10px] uppercase tracking-wider text-slate-500 mb-3">Reach Estimate</p>
+                        <div className="rounded-xl border border-gray-200 bg-gray-50/30 p-4">
+                          <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-3">Reach Estimate</p>
                           <div className="flex items-end gap-3">
                             <span className="text-2xl font-bold text-white">{selected.estimatedReach}</span>
-                            <span className="text-xs text-slate-500 pb-1">impressions</span>
+                            <span className="text-xs text-gray-400 pb-1">impressions</span>
                           </div>
-                          <div className="mt-3 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                          <div className="mt-3 h-1.5 bg-gray-100 rounded-full overflow-hidden">
                             <div className="h-full bg-gradient-to-r from-[#0077b5] to-cyan-400 rounded-full" style={{ width: '70%' }} />
                           </div>
                         </div>
-                        <div className="rounded-xl border border-slate-800 bg-slate-900/30 p-4 space-y-2">
-                          <p className="text-[10px] uppercase tracking-wider text-slate-500">Structure</p>
+                        <div className="rounded-xl border border-gray-200 bg-gray-50/30 p-4 space-y-2">
+                          <p className="text-[10px] uppercase tracking-wider text-gray-400">Structure</p>
                           <div>
-                            <p className="text-[10px] text-slate-500 mb-0.5">Opening Hook (before "see more")</p>
-                            <p className="text-xs text-slate-300 leading-snug">{selected.hook}</p>
+                            <p className="text-[10px] text-gray-400 mb-0.5">Opening Hook (before "see more")</p>
+                            <p className="text-xs text-gray-700 leading-snug">{selected.hook}</p>
                           </div>
-                          <div className="h-px bg-slate-800" />
+                          <div className="h-px bg-gray-100" />
                           <div>
-                            <p className="text-[10px] text-slate-500 mb-0.5">CTA</p>
-                            <p className="text-xs text-slate-400">{selected.cta}</p>
+                            <p className="text-[10px] text-gray-400 mb-0.5">CTA</p>
+                            <p className="text-xs text-gray-500">{selected.cta}</p>
                           </div>
                         </div>
                       </div>
@@ -299,12 +299,12 @@ export const LinkedInDrawer: React.FC<LinkedInDrawerProps> = ({
                   </div>
 
                   {/* Actions */}
-                  <div className="shrink-0 px-4 py-3 border-t border-slate-800 space-y-2">
+                  <div className="shrink-0 px-4 py-3 border-t border-gray-200 space-y-2">
                     <div className="grid grid-cols-2 gap-2">
-                      <button onClick={handleCopy} className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-slate-800 border border-slate-700 text-xs text-slate-300 hover:text-white transition">
+                      <button onClick={handleCopy} className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-gray-100 border border-gray-300 text-xs text-gray-700 hover:text-white transition">
                         {copied ? '✓ Copied' : '⎘ Copy'}
                       </button>
-                      <button onClick={handleRewrite} disabled={isRewriting} className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-slate-800 border border-slate-700 text-xs text-slate-300 hover:text-white transition disabled:opacity-50">
+                      <button onClick={handleRewrite} disabled={isRewriting} className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-gray-100 border border-gray-300 text-xs text-gray-700 hover:text-white transition disabled:opacity-50">
                         {isRewriting ? <><span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-ping" /> Rewriting…</> : '↻ Rewrite'}
                       </button>
                     </div>
@@ -322,7 +322,7 @@ export const LinkedInDrawer: React.FC<LinkedInDrawerProps> = ({
                     <div className="w-12 h-12 rounded-xl bg-[#0077b5]/10 border border-[#0077b5]/20 flex items-center justify-center text-[#0a90d4] mx-auto mb-3">
                       <LinkedInLogo />
                     </div>
-                    <p className="text-sm text-slate-500">Generate posts, then select one to edit</p>
+                    <p className="text-sm text-gray-400">Generate posts, then select one to edit</p>
                   </div>
                 </div>
               )}

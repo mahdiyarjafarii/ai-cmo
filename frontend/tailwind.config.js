@@ -4,11 +4,11 @@ export default {
   theme: {
     extend: {
       colors: {
-        slate: {
-          950: '#0f172a',
-          900: '#0f1729',
-          800: '#1e293b',
-          700: '#334155',
+        brand: {
+          DEFAULT: '#fc6423',
+          hover: '#e55a1c',
+          light: '#fff4ef',
+          border: 'rgba(252,100,35,0.2)',
         },
       },
       animation: {

@@ -48,7 +48,7 @@ const renderInline = (text: string): React.ReactNode[] => {
 
     if (token.startsWith('**') && token.endsWith('**')) {
       nodes.push(
-        <strong key={nodes.length} className="font-semibold text-slate-200">
+        <strong key={nodes.length} className="font-semibold text-gray-800">
           {token.slice(2, -2)}
         </strong>
       );
@@ -56,7 +56,7 @@ const renderInline = (text: string): React.ReactNode[] => {
       nodes.push(
         <code
           key={nodes.length}
-          className="px-1 py-0.5 rounded bg-slate-800/60 border border-white/[0.06] text-[0.92em]"
+          className="px-1 py-0.5 rounded bg-gray-100 border border-gray-200 text-[0.92em]"
         >
           {token.slice(1, -1)}
         </code>
@@ -100,9 +100,9 @@ const MarkdownMessage: React.FC<{ content: string }> = ({ content }) => {
           return (
             <pre
               key={idx}
-              className="text-xs leading-relaxed overflow-x-auto rounded-xl bg-black/30 border border-white/[0.06] p-3"
+              className="text-xs leading-relaxed overflow-x-auto rounded-xl bg-black/30 border border-gray-200 p-3"
             >
-              <code className="text-slate-200">{code}</code>
+              <code className="text-gray-800">{code}</code>
             </pre>
           );
         }
@@ -225,12 +225,12 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ result }) => {
   return (
     <div className="flex flex-col h-full">
       {/* ── Chat Header ──────────────────────────── */}
-      <div className="shrink-0 relative border-b border-white/[0.04]">
+      <div className="shrink-0 relative border-b border-gray-200">
         <div className="flex items-center px-4 py-3 gap-2.5">
-          <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
           </svg>
-          <p className="text-[13px] font-semibold text-slate-100 tracking-tight">AI Chat</p>
+          <p className="text-[13px] font-semibold text-gray-900 tracking-tight">AI Chat</p>
         </div>
       </div>
 
@@ -250,13 +250,13 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ result }) => {
               <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-cyan-400 flex items-center justify-center text-white font-black text-[11px] shrink-0 shadow-md shadow-indigo-500/20">
                 C
               </div>
-              <div className="max-w-[85%] rounded-2xl rounded-tl-md px-4 py-3 bg-slate-900/60 border border-white/[0.06] text-sm text-slate-300 leading-relaxed">
+              <div className="max-w-[85%] rounded-2xl rounded-tl-md px-4 py-3 bg-white border border-gray-200 text-sm text-gray-700 leading-relaxed">
                 <p>
                   I've analyzed{' '}
                   <span className="text-indigo-300 font-semibold">{result.company.name}</span>{' '}
                   in depth — their positioning, competitors, strengths, and gaps.
                 </p>
-                <p className="mt-1.5 text-slate-400 text-xs">
+                <p className="mt-1.5 text-gray-500 text-xs">
                   What would you like to explore?
                 </p>
               </div>
@@ -272,7 +272,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ result }) => {
                   transition={{ delay: 0.1 + i * 0.05 }}
                   onClick={() => send(s)}
                   disabled={isThinking}
-                  className="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-900/30 border border-white/[0.05] hover:border-indigo-500/30 hover:bg-indigo-500/5 text-xs text-slate-400 hover:text-slate-200 transition-all disabled:opacity-50 group"
+                  className="w-full text-left px-3.5 py-2.5 rounded-xl bg-white/30 border border-gray-200 hover:border-indigo-500/30 hover:bg-indigo-500/5 text-xs text-gray-500 hover:text-gray-800 transition-all disabled:opacity-50 group"
                 >
                   <span className="text-indigo-500/60 group-hover:text-indigo-400 mr-2 transition">→</span>
                   {s}
@@ -301,7 +301,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ result }) => {
                 className={`max-w-[82%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                   msg.role === 'user'
                     ? 'bg-gradient-to-br from-indigo-600 to-indigo-700 text-white rounded-br-sm shadow-md shadow-indigo-500/15'
-                    : 'bg-slate-900/70 border border-white/[0.06] text-slate-300 rounded-bl-sm backdrop-blur-sm'
+                    : 'bg-white/70 border border-gray-200 text-gray-700 rounded-bl-sm backdrop-blur-sm'
                 }`}
               >
                 {msg.role === 'assistant' ? (
@@ -311,7 +311,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ result }) => {
                 )}
               </div>
               {msg.role === 'user' && (
-                <div className="w-6 h-6 rounded-lg bg-slate-700 border border-slate-600 flex items-center justify-center text-slate-300 text-[10px] shrink-0">
+                <div className="w-6 h-6 rounded-lg bg-slate-700 border border-slate-600 flex items-center justify-center text-gray-700 text-[10px] shrink-0">
                   U
                 </div>
               )}
@@ -330,7 +330,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ result }) => {
             <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-indigo-500 via-purple-500 to-cyan-400 flex items-center justify-center text-white text-[10px] font-black shrink-0">
               C
             </div>
-            <div className="bg-slate-900/70 border border-white/[0.06] rounded-2xl rounded-bl-sm backdrop-blur-sm">
+            <div className="bg-white/70 border border-gray-200 rounded-2xl rounded-bl-sm backdrop-blur-sm">
               <TypingDots />
             </div>
           </motion.div>
@@ -346,8 +346,8 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ result }) => {
       </div>
 
       {/* ── Premium Input ─────────────────────────────────── */}
-      <div className="shrink-0 px-4 pb-4 pt-2 border-t border-white/[0.04] bg-gradient-to-t from-[#050714] to-transparent">
-        <div className="flex items-end gap-2 rounded-2xl bg-slate-900/70 border border-white/[0.06] focus-within:border-indigo-500/40 focus-within:shadow-[0_0_0_3px_rgba(99,102,241,0.08)] transition-all px-3.5 py-2.5 backdrop-blur-sm">
+      <div className="shrink-0 px-4 pb-4 pt-2 border-t border-gray-200 bg-gradient-to-t from-[#050714] to-transparent">
+        <div className="flex items-end gap-2 rounded-2xl bg-white/70 border border-gray-200 focus-within:border-indigo-500/40 focus-within:shadow-[0_0_0_3px_rgba(99,102,241,0.08)] transition-all px-3.5 py-2.5 backdrop-blur-sm">
           <textarea
             ref={inputRef}
             value={input}
@@ -356,7 +356,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ result }) => {
             placeholder={`Ask about ${result.company.name}…`}
             disabled={isThinking}
             rows={1}
-            className="flex-1 resize-none bg-transparent text-slate-200 placeholder-slate-600 text-sm focus:outline-none py-0.5 max-h-28 overflow-y-auto disabled:opacity-50"
+            className="flex-1 resize-none bg-transparent text-gray-800 placeholder-slate-600 text-sm focus:outline-none py-0.5 max-h-28 overflow-y-auto disabled:opacity-50"
             style={{ scrollbarWidth: 'none' }}
           />
           <button
@@ -371,7 +371,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ result }) => {
             )}
           </button>
         </div>
-        <p className="text-[10px] text-slate-700 text-center mt-2">
+        <p className="text-[10px] text-gray-500 text-center mt-2">
           Enter ↵ to send · Shift+Enter for new line
         </p>
       </div>

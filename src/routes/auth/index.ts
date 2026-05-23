@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import { z } from "zod";
 import { v4 as uuidv4 } from "uuid";
 import db from "../../lib/db.js";
@@ -128,6 +129,54 @@ router.post("/refresh", async (req: Request, res: Response): Promise<void> => {
     res.clearCookie("refresh_token", COOKIE_OPTS);
     res.status(401).json({ error: "Invalid refresh token" });
   }
+});
+
+// POST /api/auth/login-by-token
+router.post("/login-by-token", async (req: Request, res: Response): Promise<void> => {
+  const { token } = req.body as { token?: string };
+
+  if (!token) {
+    res.status(400).json({ error: "Token is required" });
+    return;
+  }
+
+  const secret = process.env.NILY_JWT_SECRET;
+  if (!secret) {
+    logger.error("[login-by-token] NILY_JWT_SECRET is not configured");
+    res.status(500).json({ error: "Server configuration error" });
+    return;
+  }
+
+  let payload: { email: string; name?: string };
+  try {
+    payload = jwt.verify(token, secret, { algorithms: ["HS256"] }) as { email: string; name?: string };
+  } catch (err) {
+    logger.warn(`[login-by-token] Invalid token: ${(err as Error).message}`);
+    res.status(401).json({ error: "Invalid or expired token" });
+    return;
+  }
+
+  const { email, name } = payload;
+  if (!email) {
+    res.status(400).json({ error: "Token must contain email" });
+    return;
+  }
+
+  let user = db.prepare("SELECT id, email, name, plan, created_at FROM users WHERE email = ?").get(email) as DbUser | undefined;
+
+  if (!user) {
+    const id = uuidv4();
+    db.prepare(
+      "INSERT INTO users (id, email, password, name, plan) VALUES (?, ?, ?, ?, 'free')"
+    ).run(id, email, "", name || email.split("@")[0]);
+    user = db.prepare("SELECT id, email, name, plan, created_at FROM users WHERE id = ?").get(id) as DbUser;
+    logger.info(`[login-by-token] Auto-created user: ${email}`);
+  }
+
+  const { accessToken, refreshToken } = createTokens(user.id, user.email);
+  setTokenCookies(res, accessToken, refreshToken);
+  logger.info(`[login-by-token] Logged in: ${email}`);
+  res.json({ user: safeUser(user) });
 });
 
 // GET /api/auth/me

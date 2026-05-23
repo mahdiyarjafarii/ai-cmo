@@ -51,6 +51,9 @@ export const authApi = {
   logout: () => api.post("/auth/logout"),
 
   me: () => api.get<AuthResponse>("/auth/me"),
+
+  loginByToken: (token: string) =>
+    api.post<AuthResponse>("/auth/login-by-token", { token }),
 };
 
 export const projectsApi = {

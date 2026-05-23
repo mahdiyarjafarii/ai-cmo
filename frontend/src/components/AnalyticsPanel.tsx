@@ -108,13 +108,13 @@ export const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ result }) => {
   return (
     <div className="flex flex-col h-full">
       {/* ── Header ───────────────────────────────────────── */}
-      <div className="shrink-0 relative border-b border-white/[0.04]">
+      <div className="shrink-0 relative border-b border-gray-200">
         <div className="flex items-center justify-between px-4 py-3 gap-3">
           <div className="flex items-center gap-2.5">
-            <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
-            <p className="text-[13px] font-semibold text-slate-100 tracking-tight">Analytics</p>
+            <p className="text-[13px] font-semibold text-gray-900 tracking-tight">Analytics</p>
           </div>
         </div>
 
@@ -127,8 +127,8 @@ export const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ result }) => {
                 onClick={() => setActiveStrategy(s)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                   activeStrategy === s
-                    ? 'bg-blue-500/15 text-blue-300 border border-blue-500/25'
-                    : 'text-slate-500 hover:text-slate-300 hover:bg-white/[0.03]'
+                    ? 'bg-blue-500/15 text-blue-600 border border-blue-500/25'
+                    : 'text-gray-400 hover:text-gray-700 hover:bg-gray-50'
                 }`}
               >
                 {s === 'mobile' ? <MobileIcon /> : <DesktopIcon />}
@@ -146,14 +146,14 @@ export const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ result }) => {
         {state.status === 'loading' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-5">
             <div>
-              <p className="text-[10px] text-slate-600 uppercase tracking-wider font-semibold mb-3">
+              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mb-3">
                 {activeStrategy === 'mobile' ? 'Mobile' : 'Desktop'} Scores
               </p>
               <LoadingScores />
             </div>
             <div className="space-y-2 animate-pulse">
               {[0, 1, 2, 3].map((i) => (
-                <div key={i} className="h-10 rounded-xl bg-white/[0.03] border border-white/[0.04]" />
+                <div key={i} className="h-10 rounded-xl bg-gray-50 border border-gray-200" />
               ))}
             </div>
           </motion.div>
@@ -164,7 +164,7 @@ export const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ result }) => {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
             {/* Scores */}
             <div>
-              <p className="text-[10px] text-slate-600 uppercase tracking-wider font-semibold mb-3">
+              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mb-3">
                 {activeStrategy === 'mobile' ? 'Mobile' : 'Desktop'} Performance
               </p>
               {activeStrategy === 'mobile' ? (
@@ -183,15 +183,15 @@ export const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ result }) => {
               ].map((l) => (
                 <div key={l.label} className="flex items-center gap-1.5">
                   <div className={`w-2 h-2 rounded-full ${l.color}`} />
-                  <span className="text-slate-600">{l.label}</span>
+                  <span className="text-gray-400">{l.label}</span>
                 </div>
               ))}
             </div>
 
             {/* M vs D comparison */}
-            <div className="rounded-2xl border border-white/[0.05] bg-white/[0.02] overflow-hidden">
-              <div className="px-4 py-3 border-b border-white/[0.04]">
-                <p className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">
+            <div className="rounded-2xl border border-gray-200 bg-white overflow-hidden">
+              <div className="px-4 py-3 border-b border-gray-200">
+                <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">
                   Mobile vs Desktop
                 </p>
               </div>
@@ -204,19 +204,19 @@ export const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ result }) => {
                   return (
                     <div key={key} className="space-y-1">
                       <div className="flex items-center justify-between text-[10px]">
-                        <span className="text-slate-500">{label}</span>
+                        <span className="text-gray-400">{label}</span>
                         <div className="flex items-center gap-2">
-                          <span className="text-slate-400 font-mono">{mScore ?? '—'}</span>
-                          <span className="text-slate-700">→</span>
-                          <span className="text-slate-400 font-mono">{dScore ?? '—'}</span>
+                          <span className="text-gray-500 font-mono">{mScore ?? '—'}</span>
+                          <span className="text-gray-500">→</span>
+                          <span className="text-gray-500 font-mono">{dScore ?? '—'}</span>
                           {delta != null && (
-                            <span className={`font-bold text-[9px] px-1 rounded ${delta > 0 ? 'text-green-400' : delta < 0 ? 'text-red-400' : 'text-slate-600'}`}>
+                            <span className={`font-bold text-[9px] px-1 rounded ${delta > 0 ? 'text-green-400' : delta < 0 ? 'text-red-400' : 'text-gray-400'}`}>
                               {delta > 0 ? `+${delta}` : delta}
                             </span>
                           )}
                         </div>
                       </div>
-                      <div className="h-1 rounded-full bg-slate-800/60 overflow-hidden">
+                      <div className="h-1 rounded-full bg-gray-100 overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${pct}%` }}
@@ -233,20 +233,20 @@ export const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ result }) => {
             </div>
 
             {/* Core Web Vitals */}
-            <div className="rounded-2xl border border-white/[0.05] bg-white/[0.02] p-4">
+            <div className="rounded-2xl border border-gray-200 bg-white p-4">
               <CoreWebVitalsSection
                 {...(activeStrategy === 'mobile' ? state.data.mobile.coreWebVitals : state.data.desktop.coreWebVitals)}
               />
             </div>
 
             {/* SEO Health */}
-            <div className="rounded-2xl border border-white/[0.05] bg-white/[0.02] p-4">
+            <div className="rounded-2xl border border-gray-200 bg-white p-4">
               <SeoHealthTable
                 data={activeStrategy === 'mobile' ? state.data.mobile.seoHealth : state.data.desktop.seoHealth}
               />
             </div>
 
-            <div className="text-[10px] text-slate-700 text-right">
+            <div className="text-[10px] text-gray-500 text-right">
               Fetched {new Date(state.data.fetchedAt).toLocaleTimeString()}
             </div>
           </motion.div>
@@ -263,13 +263,13 @@ export const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ result }) => {
               🔑
             </div>
             <div>
-              <p className="text-sm font-semibold text-slate-200 mb-1">Add a Google API Key</p>
-              <p className="text-xs text-slate-500 leading-relaxed max-w-[220px]">
+              <p className="text-sm font-semibold text-gray-800 mb-1">Add a Google API Key</p>
+              <p className="text-xs text-gray-400 leading-relaxed max-w-[220px]">
                 Add{' '}
                 <code className="text-indigo-300 bg-indigo-500/10 px-1.5 py-0.5 rounded font-mono text-[10px]">
                   GOOGLE_PAGESPEED_KEY
                 </code>{' '}
-                to your <code className="text-slate-400 font-mono text-[10px]">.env</code> to see real scores.
+                to your <code className="text-gray-500 font-mono text-[10px]">.env</code> to see real scores.
               </p>
             </div>
             <a
@@ -293,8 +293,8 @@ export const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ result }) => {
             <div className="w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-3xl">
               ⚠️
             </div>
-            <p className="text-sm font-semibold text-slate-200">PageSpeed fetch failed</p>
-            <p className="text-xs text-slate-500 leading-relaxed max-w-[220px]">{state.message}</p>
+            <p className="text-sm font-semibold text-gray-800">PageSpeed fetch failed</p>
+            <p className="text-xs text-gray-400 leading-relaxed max-w-[220px]">{state.message}</p>
             <button
               onClick={() => {
                 setState({ status: 'loading' });
@@ -306,7 +306,7 @@ export const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ result }) => {
                   }
                 });
               }}
-              className="text-xs px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700 transition"
+              className="text-xs px-4 py-2 rounded-xl bg-gray-100 border border-gray-300 text-gray-700 hover:text-white hover:bg-slate-700 transition"
             >
               Retry
             </button>
@@ -315,8 +315,8 @@ export const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ result }) => {
 
         {/* Connect CTAs */}
         {state.status !== 'loading' && (
-          <div className="space-y-2.5 pt-2 border-t border-white/[0.04]">
-            <p className="text-[10px] text-slate-700 uppercase tracking-wider font-semibold">
+          <div className="space-y-2.5 pt-2 border-t border-gray-200">
+            <p className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">
               Connect more sources
             </p>
             {[
@@ -325,14 +325,14 @@ export const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ result }) => {
             ].map((item) => (
               <div
                 key={item.label}
-                className="flex items-center gap-3 p-3 rounded-xl border border-dashed border-white/[0.06] bg-white/[0.01]"
+                className="flex items-center gap-3 p-3 rounded-xl border border-dashed border-gray-200 bg-gray-50"
               >
                 <span className="text-xl">{item.icon}</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-slate-400">{item.label}</p>
-                  <p className="text-[10px] text-slate-600">{item.sub}</p>
+                  <p className="text-xs font-semibold text-gray-500">{item.label}</p>
+                  <p className="text-[10px] text-gray-400">{item.sub}</p>
                 </div>
-                <span className="shrink-0 px-2.5 py-1 text-[10px] font-semibold rounded-lg bg-slate-800/60 text-slate-600 border border-slate-700/50">
+                <span className="shrink-0 px-2.5 py-1 text-[10px] font-semibold rounded-lg bg-gray-100 text-gray-400 border border-gray-300">
                   Soon
                 </span>
               </div>

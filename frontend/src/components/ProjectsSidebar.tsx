@@ -12,59 +12,43 @@ interface ProjectsSidebarProps {
 }
 
 const statusColor: Record<Project['status'], string> = {
-  pending: 'bg-slate-600',
-  crawling: 'bg-blue-400 animate-pulse',
-  done: 'bg-green-400',
-  error: 'bg-red-400',
+  pending: 'bg-gray-400',
+  crawling: 'bg-[#fc6423] animate-pulse',
+  done: 'bg-green-500',
+  error: 'bg-red-500',
 };
 
 export function ProjectsSidebar({
-  open,
-  onClose,
-  projects,
-  activeProjectId,
-  onOpenProject,
-  onDeleteProject,
-  plan,
+  open, onClose, projects, activeProjectId, onOpenProject, onDeleteProject, plan,
 }: ProjectsSidebarProps) {
   return (
     <AnimatePresence>
       {open && (
         <>
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40"
-            style={{ background: 'rgba(5,7,20,0.6)', backdropFilter: 'blur(4px)' }}
+            className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm"
             onClick={onClose}
           />
 
-          {/* Sidebar */}
           <motion.div
             initial={{ x: '100%', opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: '100%', opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed right-0 top-0 h-full w-80 z-50 flex flex-col"
-            style={{
-              background: 'linear-gradient(180deg, #0d1028 0%, #080b1f 100%)',
-              borderLeft: '1px solid rgba(99,102,241,0.15)',
-            }}
+            className="fixed right-0 top-0 h-full w-80 z-50 flex flex-col bg-white border-l border-gray-200 shadow-2xl"
           >
             {/* Header */}
-            <div className="px-5 py-5 border-b border-slate-800/60 flex items-center justify-between">
+            <div className="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
               <div>
-                <h2 className="text-slate-100 font-semibold text-sm">My Projects</h2>
-                <p className="text-slate-500 text-xs mt-0.5">
+                <h2 className="text-gray-900 font-semibold text-sm">My Projects</h2>
+                <p className="text-gray-400 text-xs mt-0.5">
                   {plan === 'free' ? `${projects.length}/1 · Free plan` : `${projects.length} projects · Pro`}
                 </p>
               </div>
-              <button
-                onClick={onClose}
-                className="text-slate-500 hover:text-slate-300 transition text-lg"
-              >
+              <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition text-lg w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100">
                 ✕
               </button>
             </div>
@@ -72,11 +56,9 @@ export function ProjectsSidebar({
             {/* Project list */}
             <div className="flex-1 overflow-y-auto py-3 px-3">
               {projects.length === 0 ? (
-                <div className="text-center py-12 text-slate-500 text-sm">
-                  No projects yet
-                </div>
+                <div className="text-center py-12 text-gray-400 text-sm">No projects yet</div>
               ) : (
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   {projects.map((project) => (
                     <motion.div
                       key={project.id}
@@ -84,30 +66,23 @@ export function ProjectsSidebar({
                       onClick={() => onOpenProject(project)}
                       className={`group relative flex items-center gap-3 px-3 py-3 rounded-xl cursor-pointer transition border ${
                         activeProjectId === project.id
-                          ? 'bg-indigo-500/10 border-indigo-500/30'
-                          : 'border-transparent hover:bg-slate-800/50 hover:border-slate-700/50'
+                          ? 'bg-[#fc6423]/8 border-[#fc6423]/25'
+                          : 'border-transparent hover:bg-gray-50 hover:border-gray-200'
                       }`}
                     >
-                      {/* Status dot */}
                       <div className={`w-2 h-2 rounded-full shrink-0 ${statusColor[project.status]}`} />
-
-                      {/* Info */}
                       <div className="flex-1 min-w-0">
-                        <p className="text-slate-100 text-sm font-medium truncate">
-                          {project.name}
-                        </p>
-                        <p className="text-slate-500 text-xs truncate mt-0.5">
+                        <p className="text-gray-900 text-sm font-medium truncate">{project.name}</p>
+                        <p className="text-gray-400 text-xs truncate mt-0.5">
                           {project.url.replace(/^https?:\/\//, '')}
                         </p>
                       </div>
-
-                      {/* Delete */}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           if (confirm('Delete this project?')) onDeleteProject(project.id);
                         }}
-                        className="opacity-0 group-hover:opacity-100 text-slate-600 hover:text-red-400 transition text-sm shrink-0"
+                        className="opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-500 transition text-sm shrink-0"
                       >
                         🗑
                       </button>
@@ -117,19 +92,13 @@ export function ProjectsSidebar({
               )}
             </div>
 
-            {/* Upgrade banner (free plan only) */}
+            {/* Upgrade banner */}
             {plan === 'free' && (
-              <div className="px-4 py-4 border-t border-slate-800/60">
-                <div
-                  className="rounded-xl p-4 text-center"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(99,102,241,0.15), rgba(168,85,247,0.15))',
-                    border: '1px solid rgba(99,102,241,0.2)',
-                  }}
-                >
-                  <p className="text-slate-300 text-xs font-medium mb-1">⚡ Upgrade to Pro</p>
-                  <p className="text-slate-500 text-xs mb-3">Unlimited projects & deeper insights</p>
-                  <button className="w-full py-2 text-xs font-semibold rounded-lg bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400 text-white opacity-80 cursor-not-allowed">
+              <div className="px-4 py-4 border-t border-gray-200">
+                <div className="rounded-xl p-4 text-center bg-gradient-to-br from-[#fff4ef] to-orange-50 border border-[#fc6423]/20">
+                  <p className="text-gray-800 text-xs font-medium mb-1">⚡ Upgrade to Pro</p>
+                  <p className="text-gray-500 text-xs mb-3">Unlimited projects & deeper insights</p>
+                  <button className="w-full py-2 text-xs font-semibold rounded-lg bg-[#fc6423] text-white opacity-60 cursor-not-allowed">
                     Coming Soon
                   </button>
                 </div>

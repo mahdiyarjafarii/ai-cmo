@@ -8,11 +8,7 @@ interface CompetitorCardProps {
 }
 
 function getDomain(url: string): string {
-  try {
-    return new URL(url).hostname.replace(/^www\./, '');
-  } catch {
-    return url;
-  }
+  try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return url; }
 }
 
 function getFaviconFallback(url: string): string {
@@ -39,10 +35,9 @@ export const CompetitorCard: React.FC<CompetitorCardProps> = ({ competitor, inde
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25, delay: index * 0.04 }}
-      className="flex items-start gap-3 p-3 rounded-xl border border-white/[0.05] bg-white/[0.02] hover:bg-white/[0.04] transition-colors"
+      className="flex items-start gap-3 p-3 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition-colors shadow-sm"
     >
-      {/* Logo */}
-      <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden shrink-0 mt-0.5">
+      <div className="w-8 h-8 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center overflow-hidden shrink-0 mt-0.5">
         {logoSrc ? (
           <img
             src={logoSrc}
@@ -52,24 +47,20 @@ export const CompetitorCard: React.FC<CompetitorCardProps> = ({ competitor, inde
             loading="lazy"
           />
         ) : (
-          <span className="text-slate-300 font-bold text-xs">{getInitials(competitor.name)}</span>
+          <span className="text-gray-700 font-bold text-xs">{getInitials(competitor.name)}</span>
         )}
       </div>
-
-      {/* Info */}
       <div className="flex-1 min-w-0">
-        <p className="text-xs font-semibold text-slate-200 truncate">{competitor.name}</p>
+        <p className="text-xs font-semibold text-gray-900 truncate">{competitor.name}</p>
         {description && (
-          <p className="text-[11px] text-slate-500 leading-relaxed line-clamp-2 mt-0.5">{description}</p>
+          <p className="text-[11px] text-gray-500 leading-relaxed line-clamp-2 mt-0.5">{description}</p>
         )}
       </div>
-
-      {/* Visit button */}
       <a
         href={competitor.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="shrink-0 px-2.5 py-1 text-[10px] font-semibold rounded-lg bg-slate-800/80 border border-white/[0.06] text-slate-400 hover:text-slate-200 hover:bg-slate-700/80 transition-colors mt-0.5"
+        className="shrink-0 px-2.5 py-1 text-[10px] font-semibold rounded-lg bg-gray-100 border border-gray-200 text-gray-500 hover:text-[#fc6423] hover:border-[#fc6423]/30 transition-colors mt-0.5"
       >
         Visit →
       </a>

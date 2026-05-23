@@ -19,7 +19,7 @@ const PRIORITY_CONFIG: Record<SeoImpact, { label: string; color: string; bar: st
   critical: { label: 'Critical', color: 'text-red-400 bg-red-500/10 border-red-500/30',    bar: 'bg-red-500',    dot: 'bg-red-400' },
   high:     { label: 'High',     color: 'text-orange-400 bg-orange-500/10 border-orange-500/30', bar: 'bg-orange-500', dot: 'bg-orange-400' },
   medium:   { label: 'Medium',   color: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/30', bar: 'bg-yellow-500', dot: 'bg-yellow-400' },
-  low:      { label: 'Low',      color: 'text-slate-400 bg-slate-800 border-slate-700',     bar: 'bg-slate-600',  dot: 'bg-slate-500' },
+  low:      { label: 'Low',      color: 'text-gray-500 bg-gray-100 border-gray-300',     bar: 'bg-slate-600',  dot: 'bg-slate-500' },
 };
 
 const CATEGORY_CONFIG: Record<SeoCategory, { label: string; icon: string }> = {
@@ -74,18 +74,18 @@ const RecommendationCard: React.FC<{
       onClick={onClick}
       whileHover={{ x: 2 }}
       className={`w-full text-left p-3 rounded-xl border transition-all ${
-        isSelected ? 'border-green-500/30 bg-green-500/5' : 'border-slate-800 bg-slate-900/30 hover:border-slate-700'
+        isSelected ? 'border-green-500/30 bg-green-500/5' : 'border-gray-200 bg-gray-50/30 hover:border-gray-300'
       }`}
     >
       <div className="flex items-start gap-2 mb-1.5">
         <span className={`shrink-0 w-1.5 h-1.5 rounded-full mt-1.5 ${p.dot}`} />
         <div className="flex-1 min-w-0">
-          <p className="text-xs text-slate-200 font-medium leading-snug line-clamp-2">{rec.issue}</p>
+          <p className="text-xs text-gray-800 font-medium leading-snug line-clamp-2">{rec.issue}</p>
         </div>
       </div>
       <div className="flex items-center gap-1.5 ml-3.5">
         <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full border ${p.color}`}>{p.label}</span>
-        <span className="text-[9px] text-slate-600">{cat.icon} {cat.label}</span>
+        <span className="text-[9px] text-gray-400">{cat.icon} {cat.label}</span>
       </div>
     </motion.button>
   );
@@ -105,7 +105,7 @@ const CategoryFilter: React.FC<{
           className={`text-[9px] font-semibold px-2 py-0.5 rounded-full border transition capitalize ${
             active === c
               ? 'bg-green-500/10 border-green-500/30 text-green-400'
-              : 'bg-slate-900 border-slate-800 text-slate-500 hover:text-slate-300'
+              : 'bg-gray-50 border-gray-200 text-gray-400 hover:text-gray-700'
           }`}
         >
           {c === 'all' ? '✦ All' : `${CATEGORY_CONFIG[c].icon} ${CATEGORY_CONFIG[c].label}`}
@@ -164,17 +164,17 @@ export const SeoDrawer: React.FC<SeoDrawerProps> = ({
           <motion.div
             initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="fixed right-0 top-0 h-full w-full max-w-2xl bg-[#050714] border-l border-slate-800 z-50 flex flex-col"
+            className="fixed right-0 top-0 h-full w-full max-w-2xl bg-white border-l border-gray-200 z-50 flex flex-col"
           >
             {/* Header */}
-            <div className="shrink-0 flex items-center justify-between px-5 py-4 border-b border-slate-800 bg-green-500/5">
+            <div className="shrink-0 flex items-center justify-between px-5 py-4 border-b border-gray-200 bg-green-500/5">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl bg-green-500/20 border border-green-500/30 flex items-center justify-center text-green-400">
                   <SearchIcon />
                 </div>
                 <div>
                   <h2 className="text-sm font-bold text-white">SEO Recommendations</h2>
-                  <p className="text-[11px] text-slate-500">AI-powered audit · Prioritized by impact · {companyName}</p>
+                  <p className="text-[11px] text-gray-400">AI-powered audit · Prioritized by impact · {companyName}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -183,19 +183,19 @@ export const SeoDrawer: React.FC<SeoDrawerProps> = ({
                     {report.recommendations.length} issues
                   </span>
                 )}
-                <button onClick={onClose} className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-500 hover:text-white hover:bg-slate-800 transition">✕</button>
+                <button onClick={onClose} className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-100 transition">✕</button>
               </div>
             </div>
 
             <div className="flex-1 min-h-0 flex overflow-hidden">
               {/* Left panel */}
-              <div className="w-[210px] shrink-0 border-r border-slate-800 flex flex-col overflow-hidden">
+              <div className="w-[210px] shrink-0 border-r border-gray-200 flex flex-col overflow-hidden">
                 {/* Score + generate */}
-                <div className="px-3 py-3 border-b border-slate-800 space-y-3">
+                <div className="px-3 py-3 border-b border-gray-200 space-y-3">
                   {report && (
                     <div className="flex flex-col items-center py-1">
                       <ScoreGauge score={report.overallScore} />
-                      <p className="text-[10px] text-slate-500 mt-1">SEO Health Score</p>
+                      <p className="text-[10px] text-gray-400 mt-1">SEO Health Score</p>
                     </div>
                   )}
                   <button
@@ -222,11 +222,11 @@ export const SeoDrawer: React.FC<SeoDrawerProps> = ({
                     ))
                   ) : isGenerating ? (
                     <div className="space-y-2 py-2">
-                      {[0,1,2,3,4].map(i => <div key={i} className="w-full h-14 rounded-xl bg-slate-800/50 animate-pulse" />)}
+                      {[0,1,2,3,4].map(i => <div key={i} className="w-full h-14 rounded-xl bg-gray-100/50 animate-pulse" />)}
                     </div>
                   ) : !report ? (
                     <div className="py-8 text-center px-2">
-                      <p className="text-[11px] text-slate-600">Run analysis to see recommendations</p>
+                      <p className="text-[11px] text-gray-400">Run analysis to see recommendations</p>
                     </div>
                   ) : null}
                 </div>
@@ -236,16 +236,16 @@ export const SeoDrawer: React.FC<SeoDrawerProps> = ({
               {selected ? (
                 <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
                   {/* Badges */}
-                  <div className="shrink-0 px-4 py-2.5 border-b border-slate-800 flex items-center gap-2 flex-wrap">
+                  <div className="shrink-0 px-4 py-2.5 border-b border-gray-200 flex items-center gap-2 flex-wrap">
                     {p && <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${p.color}`}>{p.label}</span>}
-                    {cat && <span className="text-[10px] text-slate-500">{cat.icon} {cat.label}</span>}
+                    {cat && <span className="text-[10px] text-gray-400">{cat.icon} {cat.label}</span>}
                     {effort && <span className={`text-[10px] font-semibold ml-auto ${effort.color}`}>{effort.label}</span>}
                   </div>
 
                   <div className="flex-1 overflow-y-auto p-4 space-y-4">
                     {/* Issue */}
-                    <div className="p-4 rounded-xl border border-slate-800 bg-slate-900/30">
-                      <p className="text-[10px] uppercase tracking-wider text-slate-500 mb-1.5">Issue</p>
+                    <div className="p-4 rounded-xl border border-gray-200 bg-gray-50/30">
+                      <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-1.5">Issue</p>
                       <p className="text-base font-bold text-white leading-snug">{selected.issue}</p>
                     </div>
 
@@ -258,8 +258,8 @@ export const SeoDrawer: React.FC<SeoDrawerProps> = ({
                           <p className="text-[10px] text-green-400 mt-0.5">{selected.estimatedTrafficGain}</p>
                         )}
                       </div>
-                      <div className="p-3 rounded-xl border border-slate-800 bg-slate-900/30">
-                        <p className="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Effort</p>
+                      <div className="p-3 rounded-xl border border-gray-200 bg-gray-50/30">
+                        <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-1">Effort</p>
                         {effort && <p className={`text-sm font-semibold ${effort.color}`}>{effort.label}</p>}
                       </div>
                     </div>
@@ -267,22 +267,22 @@ export const SeoDrawer: React.FC<SeoDrawerProps> = ({
                     {/* Fix */}
                     <div className="p-4 rounded-xl border border-indigo-500/20 bg-indigo-500/5">
                       <p className="text-[10px] uppercase tracking-wider text-indigo-400 mb-2">Recommended Fix</p>
-                      <p className="text-sm text-slate-200 leading-relaxed">{selected.fix}</p>
+                      <p className="text-sm text-gray-800 leading-relaxed">{selected.fix}</p>
                     </div>
 
                     {/* Reasoning */}
-                    <div className="p-4 rounded-xl border border-slate-800 bg-slate-900/20">
-                      <p className="text-[10px] uppercase tracking-wider text-slate-500 mb-2">Why This Matters for {companyName}</p>
-                      <p className="text-sm text-slate-400 leading-relaxed">{selected.reasoning}</p>
+                    <div className="p-4 rounded-xl border border-gray-200 bg-gray-50/20">
+                      <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-2">Why This Matters for {companyName}</p>
+                      <p className="text-sm text-gray-500 leading-relaxed">{selected.reasoning}</p>
                     </div>
 
                     {/* Keyword opportunities */}
                     {report && report.keywordOpportunities.length > 0 && (
-                      <div className="p-4 rounded-xl border border-slate-800 bg-slate-900/20">
-                        <p className="text-[10px] uppercase tracking-wider text-slate-500 mb-3">Keyword Opportunities</p>
+                      <div className="p-4 rounded-xl border border-gray-200 bg-gray-50/20">
+                        <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-3">Keyword Opportunities</p>
                         <div className="flex flex-wrap gap-2">
                           {report.keywordOpportunities.map((kw, i) => (
-                            <span key={i} className="text-[11px] px-2 py-1 rounded-lg bg-slate-800 border border-slate-700 text-slate-300">
+                            <span key={i} className="text-[11px] px-2 py-1 rounded-lg bg-gray-100 border border-gray-300 text-gray-700">
                               {kw}
                             </span>
                           ))}
@@ -294,13 +294,13 @@ export const SeoDrawer: React.FC<SeoDrawerProps> = ({
                     {report?.topCompetitorGap && (
                       <div className="p-3 rounded-xl border border-red-500/10 bg-red-500/5">
                         <p className="text-[10px] uppercase tracking-wider text-red-400 mb-1.5">Top Competitor Gap</p>
-                        <p className="text-xs text-slate-400 leading-relaxed">{report.topCompetitorGap}</p>
+                        <p className="text-xs text-gray-500 leading-relaxed">{report.topCompetitorGap}</p>
                       </div>
                     )}
                   </div>
 
                   {/* Actions */}
-                  <div className="shrink-0 px-4 py-3 border-t border-slate-800">
+                  <div className="shrink-0 px-4 py-3 border-t border-gray-200">
                     <button
                       onClick={handleCopyFix}
                       className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-green-600 text-white text-sm font-semibold hover:bg-green-500 transition"
@@ -315,7 +315,7 @@ export const SeoDrawer: React.FC<SeoDrawerProps> = ({
                     <div className="w-12 h-12 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center text-green-400 mx-auto mb-3">
                       <SearchIcon />
                     </div>
-                    <p className="text-sm text-slate-500">Run analysis, then select an issue to see details</p>
+                    <p className="text-sm text-gray-400">Run analysis, then select an issue to see details</p>
                   </div>
                 </div>
               )}

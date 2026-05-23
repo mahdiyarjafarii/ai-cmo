@@ -16,8 +16,8 @@ const RATING_COLORS: Record<ScoreRating, { stroke: string; text: string; bg: str
   good:              { stroke: '#22c55e', text: 'text-green-400',  bg: 'bg-green-500/10' },
   'needs-improvement': { stroke: '#f97316', text: 'text-orange-400', bg: 'bg-orange-500/10' },
   poor:              { stroke: '#ef4444', text: 'text-red-400',    bg: 'bg-red-500/10' },
-  loading:           { stroke: '#475569', text: 'text-slate-500',  bg: 'bg-slate-800' },
-  unavailable:       { stroke: '#334155', text: 'text-slate-600',  bg: 'bg-slate-900' },
+  loading:           { stroke: '#475569', text: 'text-gray-400',  bg: 'bg-gray-100' },
+  unavailable:       { stroke: '#334155', text: 'text-gray-400',  bg: 'bg-white' },
 };
 
 export function getRating(score: number | null): ScoreRating {
@@ -93,12 +93,12 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
               {score}
             </motion.span>
           ) : (
-            <span className="text-xs text-slate-600">—</span>
+            <span className="text-xs text-gray-400">—</span>
           )}
         </div>
       </div>
 
-      <span className="text-[11px] text-slate-400 text-center leading-tight max-w-[72px]">
+      <span className="text-[11px] text-gray-500 text-center leading-tight max-w-[72px]">
         {label}
       </span>
     </div>
@@ -129,10 +129,10 @@ export const ScoreGaugeSkeleton: React.FC<{ size?: number }> = ({
           />
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-7 h-4 bg-slate-800 rounded" />
+          <div className="w-7 h-4 bg-gray-100 rounded" />
         </div>
       </div>
-      <div className="w-14 h-2.5 bg-slate-800 rounded animate-pulse" />
+      <div className="w-14 h-2.5 bg-gray-100 rounded animate-pulse" />
     </div>
   );
 };

@@ -60,8 +60,8 @@ const VitalRow: React.FC<{ vital: CoreWebVitalData; index: number }> = ({
     >
       {/* Label + description */}
       <div className="w-12 shrink-0">
-        <div className="text-xs font-bold text-slate-300">{vital.label}</div>
-        <div className="text-[10px] text-slate-600">{info?.goodThreshold}</div>
+        <div className="text-xs font-bold text-gray-700">{vital.label}</div>
+        <div className="text-[10px] text-gray-400">{info?.goodThreshold}</div>
       </div>
 
       {/* Bar + value */}
@@ -69,7 +69,7 @@ const VitalRow: React.FC<{ vital: CoreWebVitalData; index: number }> = ({
         <div className="flex items-baseline gap-2 mb-1">
           <span
             className={`text-base font-bold leading-none ${
-              cfg ? cfg.className.split(' ')[0] : 'text-slate-500'
+              cfg ? cfg.className.split(' ')[0] : 'text-gray-400'
             }`}
           >
             {vital.displayValue}
@@ -83,7 +83,7 @@ const VitalRow: React.FC<{ vital: CoreWebVitalData; index: number }> = ({
           )}
         </div>
         {/* Progress bar relative to the "poor" threshold */}
-        <div className="h-1 w-full bg-slate-900 rounded-full overflow-hidden">
+        <div className="h-1 w-full bg-white rounded-full overflow-hidden">
           {vital.numericValue != null && (
             <motion.div
               initial={{ width: 0 }}
@@ -128,7 +128,7 @@ export const CoreWebVitalsSection: React.FC<CoreWebVitalsProps> = ({
 }) => {
   return (
     <div>
-      <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-3 font-semibold">
+      <div className="text-[10px] text-gray-400 uppercase tracking-wider mb-3 font-semibold">
         Core Web Vitals
       </div>
       <div>
