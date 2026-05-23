@@ -30,7 +30,7 @@ const ANGLE_META: Record<TwitterAngle, { label: string; color: string; desc: str
 const ENGAGEMENT_CONFIG = {
   high:   { label: 'High Engagement', color: 'text-green-400', bar: 'bg-green-400', width: 'w-[85%]' },
   medium: { label: 'Med Engagement',  color: 'text-yellow-400', bar: 'bg-yellow-400', width: 'w-[55%]' },
-  low:    { label: 'Low Engagement',  color: 'text-gray-400',  bar: 'bg-slate-600', width: 'w-[28%]' },
+  low:    { label: 'Low Engagement',  color: 'text-gray-400',  bar: 'bg-gray-300', width: 'w-[28%]' },
 };
 
 const TweetPreview: React.FC<{ text: string; companyName: string }> = ({ text, companyName }) => {
@@ -39,7 +39,7 @@ const TweetPreview: React.FC<{ text: string; companyName: string }> = ({ text, c
   const initials = companyName.slice(0, 2).toUpperCase();
 
   return (
-    <div className="rounded-2xl border border-gray-300 bg-[#000] p-4">
+    <div className="rounded-2xl border border-gray-300 bg-gray-900 p-4">
       {/* Author */}
       <div className="flex items-start gap-3 mb-3">
         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
@@ -191,7 +191,7 @@ export const XWriterDrawer: React.FC<XWriterDrawerProps> = ({
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
           />
           <motion.div
             initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
@@ -199,9 +199,9 @@ export const XWriterDrawer: React.FC<XWriterDrawerProps> = ({
             className="fixed right-0 top-0 h-full w-full max-w-2xl bg-white border-l border-gray-200 z-50 flex flex-col"
           >
             {/* ── Header ── */}
-            <div className="shrink-0 flex items-center justify-between px-5 py-4 border-b border-gray-200 bg-black/40">
+            <div className="shrink-0 flex items-center justify-between px-5 py-4 border-b border-gray-200 bg-white">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-black border border-gray-300 flex items-center justify-center text-white">
+                <div className="w-9 h-9 rounded-xl bg-gray-900 border border-gray-200 flex items-center justify-center text-white">
                   <XLogo />
                 </div>
                 <div>
@@ -215,7 +215,7 @@ export const XWriterDrawer: React.FC<XWriterDrawerProps> = ({
                     {feed.posts.length} posts
                   </span>
                 )}
-                <button onClick={onClose} className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-100 transition">✕</button>
+                <button onClick={onClose} className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition">✕</button>
               </div>
             </div>
 
@@ -226,11 +226,11 @@ export const XWriterDrawer: React.FC<XWriterDrawerProps> = ({
                   <button
                     onClick={handleGenerate}
                     disabled={isGenerating}
-                    className="w-full py-2 rounded-lg text-xs font-semibold bg-white text-black hover:bg-slate-100 transition disabled:opacity-50 flex items-center justify-center gap-1.5"
+                    className="w-full py-2 rounded-lg text-xs font-semibold bg-[#fc6423] text-white hover:bg-[#e55a1c] transition disabled:opacity-50 flex items-center justify-center gap-1.5"
                   >
                     {isGenerating ? (
                       <>
-                        <span className="w-1.5 h-1.5 rounded-full bg-black animate-ping" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#fc6423] animate-ping" />
                         Generating…
                       </>
                     ) : (
@@ -277,7 +277,7 @@ export const XWriterDrawer: React.FC<XWriterDrawerProps> = ({
                     </div>
                     <div className="flex rounded-lg overflow-hidden border border-gray-200">
                       {(['preview', 'why'] as const).map((t) => (
-                        <button key={t} onClick={() => setTab(t)} className={`px-3 py-1 text-[10px] font-semibold capitalize transition ${tab === t ? 'bg-slate-700 text-white' : 'text-gray-400 hover:text-gray-700'}`}>
+                        <button key={t} onClick={() => setTab(t)} className={`px-3 py-1 text-[10px] font-semibold capitalize transition ${tab === t ? 'bg-[#fc6423] text-white' : 'text-gray-400 hover:text-gray-700'}`}>
                           {t === 'why' ? 'Why It Works' : 'Preview'}
                         </button>
                       ))}
@@ -368,7 +368,7 @@ export const XWriterDrawer: React.FC<XWriterDrawerProps> = ({
                     </div>
                     <button
                       onClick={handlePostToX}
-                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white text-black text-sm font-bold hover:bg-slate-100 transition"
+                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#fc6423] text-white text-sm font-bold hover:bg-[#e55a1c] transition"
                     >
                       <XLogo /> Post to X
                     </button>
@@ -377,7 +377,7 @@ export const XWriterDrawer: React.FC<XWriterDrawerProps> = ({
               ) : (
                 <div className="flex-1 flex items-center justify-center">
                   <div className="text-center px-6">
-                    <div className="w-12 h-12 rounded-xl bg-black border border-gray-200 flex items-center justify-center text-gray-400 mx-auto mb-3">
+                    <div className="w-12 h-12 rounded-xl bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-400 mx-auto mb-3">
                       <XLogo />
                     </div>
                     <p className="text-sm text-gray-400">Generate posts, then select one to edit</p>

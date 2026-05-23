@@ -16,9 +16,9 @@ const RedditIcon = () => (
 );
 
 const RELEVANCE_CONFIG = {
-  direct:     { label: 'Direct Match',     color: 'text-green-400 bg-green-500/10 border-green-500/20' },
-  indirect:   { label: 'Indirect Match',   color: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20' },
-  competitor: { label: 'Competitor Thread', color: 'text-red-400 bg-red-500/10 border-red-500/20' },
+  direct:     { label: 'Direct Match',     color: 'text-green-700 bg-green-50 border-green-200' },
+  indirect:   { label: 'Indirect Match',   color: 'text-yellow-700 bg-yellow-50 border-yellow-200' },
+  competitor: { label: 'Competitor Thread', color: 'text-red-700 bg-red-50 border-red-200' },
 };
 
 const OPP_TYPE_CONFIG = {
@@ -43,12 +43,12 @@ const OpportunityCard: React.FC<{
       className={`w-full text-left p-3 rounded-xl border transition-all ${
         isSelected
           ? 'border-orange-500/40 bg-orange-500/10'
-          : 'border-gray-200 bg-gray-50/30 hover:border-gray-300'
+          : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
       }`}
     >
       <div className="flex items-center gap-1.5 mb-1.5">
         <span className="text-[10px] font-bold text-orange-400 font-mono">{opp.subreddit}</span>
-        <span className="text-slate-700">·</span>
+        <span className="text-gray-500">·</span>
         <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full border ${rel.color}`}>
           {rel.label}
         </span>
@@ -117,7 +117,7 @@ export const RedditDrawer: React.FC<RedditDrawerProps> = ({
         <>
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            onClick={onClose} className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40"
+            onClick={onClose} className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
           />
           <motion.div
             initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
@@ -131,7 +131,7 @@ export const RedditDrawer: React.FC<RedditDrawerProps> = ({
                   <RedditIcon />
                 </div>
                 <div>
-                  <h2 className="text-sm font-bold text-white">Reddit Opportunities</h2>
+                  <h2 className="text-sm font-bold text-gray-900">Reddit Opportunities</h2>
                   <p className="text-[11px] text-gray-400">Real threads · AI-matched · Authentic engagement</p>
                 </div>
               </div>
@@ -141,7 +141,7 @@ export const RedditDrawer: React.FC<RedditDrawerProps> = ({
                     {feed.opportunities.length} threads
                   </span>
                 )}
-                <button onClick={onClose} className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-100 transition">✕</button>
+                <button onClick={onClose} className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition">✕</button>
               </div>
             </div>
 
@@ -214,7 +214,7 @@ export const RedditDrawer: React.FC<RedditDrawerProps> = ({
 
                   <div className="flex-1 overflow-y-auto p-4 space-y-4">
                     {/* Snippet */}
-                    <div className="p-3 rounded-xl border border-gray-200 bg-gray-50/30">
+                    <div className="p-3 rounded-xl border border-gray-200 bg-white">
                       <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-2">Thread Context</p>
                       <p className="text-xs text-gray-500 leading-relaxed">{selected.snippet}</p>
                     </div>
@@ -230,7 +230,7 @@ export const RedditDrawer: React.FC<RedditDrawerProps> = ({
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex rounded-lg overflow-hidden border border-gray-200">
                           {(['draft', 'angle'] as const).map((t) => (
-                            <button key={t} onClick={() => setReplyTab(t)} className={`px-3 py-1 text-[10px] font-semibold capitalize transition ${replyTab === t ? 'bg-slate-700 text-white' : 'text-gray-400 hover:text-gray-700'}`}>
+                            <button key={t} onClick={() => setReplyTab(t)} className={`px-3 py-1 text-[10px] font-semibold capitalize transition ${replyTab === t ? 'bg-[#fc6423] text-white' : 'text-gray-400 hover:text-gray-700'}`}>
                               {t === 'draft' ? 'Draft Reply' : 'Suggested Angle'}
                             </button>
                           ))}
@@ -246,14 +246,14 @@ export const RedditDrawer: React.FC<RedditDrawerProps> = ({
                           placeholder="Draft your reply here…"
                         />
                       ) : (
-                        <div className="p-4 rounded-xl border border-gray-200 bg-gray-50/30">
+                        <div className="p-4 rounded-xl border border-gray-200 bg-white">
                           <p className="text-xs text-gray-700 leading-relaxed">{selected.suggestedAngle}</p>
                         </div>
                       )}
                     </div>
 
                     {/* Community reminder */}
-                    <div className="p-3 rounded-xl border border-gray-200 bg-gray-50/20">
+                    <div className="p-3 rounded-xl border border-gray-200 bg-gray-50">
                       <p className="text-[10px] text-gray-400 leading-relaxed">
                         💡 <strong className="text-gray-500">Community-first rule:</strong> Lead with genuine value. Only mention {companyName} if it naturally fits the conversation. Authentic replies outperform promotional ones.
                       </p>
@@ -263,7 +263,7 @@ export const RedditDrawer: React.FC<RedditDrawerProps> = ({
                   {/* Actions */}
                   <div className="shrink-0 px-4 py-3 border-t border-gray-200 space-y-2">
                     <div className="grid grid-cols-2 gap-2">
-                      <button onClick={handleCopy} className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-gray-100 border border-gray-300 text-xs text-gray-700 hover:text-white transition">
+                      <button onClick={handleCopy} className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-gray-100 border border-gray-300 text-xs text-gray-700 hover:text-gray-900 transition">
                         {copied ? '✓ Copied' : '⎘ Copy Reply'}
                       </button>
                       <button onClick={handleOpenThread} className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-[#ff4500]/10 border border-[#ff4500]/20 text-xs text-orange-400 hover:bg-[#ff4500]/20 transition">
