@@ -10,6 +10,20 @@ import { startAnalysis, subscribeToAnalysis } from './services/api';
 import { authApi, projectsApi, Project } from './services/authApi';
 import { StepEvent } from './types';
 
+function TokenAuthLoading() {
+  return (
+    <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-6">
+      <div className="flex flex-col items-center gap-5 text-center">
+        <div className="h-12 w-12 rounded-full border-4 border-white/20 border-t-white animate-spin" />
+        <div>
+          <h1 className="text-xl font-semibold">Signing you in</h1>
+          <p className="mt-2 text-sm text-slate-300">Please wait while we verify your secure login link.</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Home page ────────────────────────────────────────────────────────────────
 
 function HomePage() {
@@ -21,7 +35,7 @@ function HomePage() {
   const [showProjects, setShowProjects] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const { user, logout } = useAuthStore();
-  const [, setTokenAuthLoading] = useState(false);
+  const [tokenAuthLoading, setTokenAuthLoading] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -95,6 +109,10 @@ function HomePage() {
 
   const { error } = useAnalysisStore();
 
+  if (tokenAuthLoading) {
+    return <TokenAuthLoading />;
+  }
+
   return (
     <>
       <InputPanel
@@ -144,6 +162,7 @@ function ProjectPage() {
   const { user, logout, setUser } = useAuthStore();
   const [showProjects, setShowProjects] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [tokenAuthLoading, setTokenAuthLoading] = useState(false);
 
   const {
     result, loading, steps, stepOrder, error,
@@ -158,6 +177,7 @@ function ProjectPage() {
     const token = params.get('token');
 
     if (token) {
+      setTokenAuthLoading(true);
       window.history.replaceState({}, '', window.location.pathname);
 
       const doLogin = () =>
@@ -168,6 +188,7 @@ function ProjectPage() {
           })
           .catch(() => setUser(null))
           .finally(() => {
+            setTokenAuthLoading(false);
             if (id) {
               projectsApi.get(id!).then(({ data }) => {
                 if (data.analysisResult) setResult(data.analysisResult as never);
@@ -243,6 +264,10 @@ function ProjectPage() {
     reset();
     navigate('/');
   };
+
+  if (tokenAuthLoading) {
+    return <TokenAuthLoading />;
+  }
 
   return (
     <>
